@@ -38,6 +38,7 @@ class CCHanddrawn extends SketcherBase {
 	var scale = 1.0;
 	var collectionPointArray:Array<Array<Point>> = [];
 	var pointArray:Array<Point> = [];
+	var videoExport:VideoExport;
 
 	public function new() {
 		// use debug?
@@ -54,8 +55,6 @@ class CCHanddrawn extends SketcherBase {
 		setupOnMouse();
 		setupVideo();
 	}
-
-	var videoExport:VideoExport;
 
 	function setupVideo() {
 		videoExport = new VideoExport();
@@ -187,7 +186,7 @@ class CCHanddrawn extends SketcherBase {
 			// sketcher.debug.Grid.gridDots(sketch, grid);
 		}
 
-		var text = sketch.makeText(message, w2, h2);
+		var text = sketch.makeText(message, w2, h4);
 		text.fontFamily = fontFamly;
 		text.fontSizePx = 100;
 		text.fontWeight = '800';
