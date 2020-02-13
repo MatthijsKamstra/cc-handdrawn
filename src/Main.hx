@@ -8,7 +8,7 @@ using StringTools;
 class Main {
 	var count:Int;
 	var hash:String;
-	var ccTypeArray:Array<Class<Dynamic>> = [art.CC100];
+	var ccTypeArray:Array<Class<Dynamic>> = [art.CCHanddrawn];
 
 	public function new() {
 		trace('START :: main');

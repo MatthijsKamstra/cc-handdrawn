@@ -58,11 +58,11 @@ Lambda.has = function(it,elt) {
 	return false;
 };
 var Main = function() {
-	this.ccTypeArray = [art_CC100];
+	this.ccTypeArray = [art_CCHanddrawn];
 	var _gthis = this;
 	console.log("src/Main.hx:14:","START :: main");
 	window.document.addEventListener("DOMContentLoaded",function(event) {
-		window.console.log("" + model_constants_App.NAME + " Dom ready :: build: " + "2020-02-13 11:17:36");
+		window.console.log("" + model_constants_App.NAME + " Dom ready :: build: " + "2020-02-13 16:30:36");
 		_gthis.setupArt();
 		_gthis.setupNav();
 	});
@@ -513,7 +513,7 @@ Sketcher.prototype = {
 			this.element.innerHTML = _xml;
 			break;
 		case "webgl":
-			console.log("Sketcher.hx:524:","webgl");
+			console.log("Sketcher.hx:530:","webgl");
 			var _g3 = 0;
 			var _g12 = this.baseArray.length;
 			while(_g3 < _g12) {
@@ -526,7 +526,7 @@ Sketcher.prototype = {
 			}
 			break;
 		default:
-			console.log("Sketcher.hx:533:","case '" + this.settings.get_type() + "': trace ('" + this.settings.get_type() + "');");
+			console.log("Sketcher.hx:539:","case '" + this.settings.get_type() + "': trace ('" + this.settings.get_type() + "');");
 		}
 	}
 	,__class__: Sketcher
@@ -924,21 +924,22 @@ Xml.prototype = {
 	}
 	,__class__: Xml
 };
-var art_CC100 = function() {
+var art_CCHanddrawn = function() {
+	this.pointArray = [];
+	this.collectionPointArray = [];
+	this.scale = 1.0;
+	this.isMouseDown = false;
 	this.fontFamly = "Oswald:200,300,400,500,600,700";
-	this.color3 = { h : 350, s : 0.9, v : 0.3};
-	this.color2 = [0,128,255,0.3];
-	this.color1 = [0,128,255];
-	this.color0 = "#ffae23";
-	this.explode = function() {
-		console.log("src/art/CC100.hx:31:","booom");
+	this.startRecording = function() {
 	};
-	this.maxSize = 0.8;
-	this.growthSpeed = 0.8;
-	this.noiseStrength = 0.8;
-	this.displayOutline = false;
-	this.speed = 0.8;
-	this.message = "dat.gui";
+	this.stopRecording = function() {
+	};
+	this.clear = function() {
+	};
+	this.strokeWeight = 10;
+	this.useAnchor = false;
+	this.useAnimation = true;
+	this.message = "\"hand-drawn\"";
 	this._color4 = null;
 	this._color3 = null;
 	this._color2 = null;
@@ -950,137 +951,110 @@ var art_CC100 = function() {
 	this.isDebug = true;
 	SketcherBase.call(this);
 	sketcher_util_EmbedUtil.embedGoogleFont(this.fontFamly,$bind(this,this.drawShape));
-	sketcher_util_EmbedUtil.datgui($bind(this,this.initDatGui2));
+	sketcher_util_EmbedUtil.datgui($bind(this,this.initDatGui));
+	this.setupOnMouse();
+	this.setupVideo();
 };
-$hxClasses["art.CC100"] = art_CC100;
-art_CC100.__name__ = "art.CC100";
-art_CC100.__super__ = SketcherBase;
-art_CC100.prototype = $extend(SketcherBase.prototype,{
-	initDatGui2: function() {
-		var text = new art_FizzyText();
-		var gui = new dat.gui.GUI();
-		gui.add(text,"message");
-		gui.add(text,"speed",-5,5);
-		gui.add(text,"displayOutline");
-		gui.add(text,"explode");
+$hxClasses["art.CCHanddrawn"] = art_CCHanddrawn;
+art_CCHanddrawn.__name__ = "art.CCHanddrawn";
+art_CCHanddrawn.__super__ = SketcherBase;
+art_CCHanddrawn.prototype = $extend(SketcherBase.prototype,{
+	setupVideo: function() {
+		this.videoExport = new sketcher_export_VideoExport();
+		this.videoExport.setCanvas(this.sketch.canvas);
+		this.videoExport.setup();
+	}
+	,setupOnMouse: function() {
+		var el = this.sketch.canvas;
+		this.sketch.canvas.onmousedown = $bind(this,this.onMouseDownHandler);
+		this.sketch.canvas.onmousemove = $bind(this,this.onMouseMoveHandler);
+		this.sketch.canvas.onmouseup = $bind(this,this.onMouseUpHandler);
+		this.scale = this.sketch.canvas.width / window.document.getElementById("sketcher_canvas").clientWidth;
+		this.sketch.canvas.focus();
+	}
+	,onMouseDownHandler: function(e) {
+		console.log("src/art/CCHanddrawn.hx:91:","onMouseDownHandler");
+		this.pointArray = [];
+		this.collectionPointArray.push(this.pointArray);
+		this.isMouseDown = true;
+	}
+	,onMouseMoveHandler: function(e) {
+		if(this.isMouseDown) {
+			var p = { x : e.offsetX * this.scale, y : e.offsetY * this.scale};
+			this.pointArray.push(p);
+		}
+	}
+	,onMouseUpHandler: function(e) {
+		console.log("src/art/CCHanddrawn.hx:109:","onMouseUpHandler");
+		this.isMouseDown = false;
 	}
 	,initDatGui: function() {
+		var _gthis = this;
 		var gui = new dat.gui.GUI();
 		gui.add(this,"message");
-		gui.add(this,"speed",-5,5);
-		gui.add(this,"displayOutline");
-		gui.add(this,"explode");
-		var f1 = gui.addFolder("Flow Field");
-		f1.add(this,"speed");
-		f1.add(this,"noiseStrength");
-		var f2 = gui.addFolder("Letters");
-		f2.add(this,"growthSpeed");
-		f2.add(this,"maxSize");
-		f2.add(this,"message");
-		gui.add(this,"message",["pizza","chrome","hooray"]);
-		gui.add(this,"speed",{ Stopped : 0, Slow : 0.1, Fast : 5});
-		gui.addColor(this,"color0");
-		gui.addColor(this,"color1");
-		gui.addColor(this,"color2");
-		gui.addColor(this,"color3");
-		var controller = gui.add(this,"maxSize",0,10);
-		controller.onChange(function(value) {
-			console.log("src/art/CC100.hx:94:","value: " + value);
+		gui.add(this,"useAnimation");
+		gui.add(this,"useAnchor");
+		gui.add(this,"strokeWeight");
+		var clearControler = gui.add(this,"clear");
+		clearControler.onFinishChange(function(value) {
+			_gthis.clearAll();
 		});
-		controller.onFinishChange(function(value1) {
-			window.alert(Std.string("The new value is " + value1));
+		var startControler = gui.add(this,"startRecording");
+		startControler.onFinishChange(function(value1) {
+			_gthis.videoExport.start();
+		});
+		var stopControler = gui.add(this,"stopRecording");
+		stopControler.onFinishChange(function(value2) {
+			_gthis.videoExport.stop();
 		});
 	}
-	,createQuickSettings: function() {
-		this.panel1 = QuickSettings.create(10,10,"Settings").setGlobalChangeHandler($bind(this,this.drawShape)).addHTML("Reason","Sometimes I need to find the best settings").addTextArea("Quote","text",function(value) {
-			console.log("src/art/CC100.hx:110:",value);
-		}).addBoolean("All Caps",false,function(value1) {
-			console.log("src/art/CC100.hx:111:",value1);
-		}).setKey("h").saveInLocalStorage("store-data-" + this.toString());
-	}
-	,createShape: function(i,point) {
-		var shape = { _id : "" + i, _type : "circle", x : point.x, y : point.y, radius : this._radius};
-		return shape;
-	}
-	,onAnimateHandler: function(obj) {
-		var padding = 50;
-		var time = sketcher_util_MathUtil.random(1,2);
-		var xpos = sketcher_util_MathUtil.random(padding,Globals.w - 2 * padding);
-		var ypos = sketcher_util_MathUtil.random(padding,Globals.h - 2 * padding);
-		var Go = new sketcher_lets_Go(obj,time);
-		Go._isFrom = false;
-		var _this = Go;
-		var objValue = 0;
-		if(Object.prototype.hasOwnProperty.call(_this._target,"x")) {
-			objValue = Reflect.getProperty(_this._target,"x");
-		}
-		var _range = { key : "x", from : _this._isFrom ? xpos : objValue, to : !_this._isFrom ? xpos : objValue};
-		var _this1 = _this._props;
-		if(__map_reserved["x"] != null) {
-			_this1.setReserved("x",_range);
-		} else {
-			_this1.h["x"] = _range;
-		}
-		if(_this._isFrom) {
-			_this.updateProperties(0);
-		}
-		var _this2 = _this;
-		var objValue1 = 0;
-		if(Object.prototype.hasOwnProperty.call(_this2._target,"y")) {
-			objValue1 = Reflect.getProperty(_this2._target,"y");
-		}
-		var _range1 = { key : "y", from : _this2._isFrom ? ypos : objValue1, to : !_this2._isFrom ? ypos : objValue1};
-		var _this3 = _this2._props;
-		if(__map_reserved["y"] != null) {
-			_this3.setReserved("y",_range1);
-		} else {
-			_this3.h["y"] = _range1;
-		}
-		if(_this2._isFrom) {
-			_this2.updateProperties(0);
-		}
-		var _this4 = _this2;
-		_this4._easing = sketcher_lets_easing_Sine.get_easeInOut();
-		var _this5 = _this4;
-		_this5._options.onComplete = $bind(this,this.onAnimateHandler);
-		_this5._options.onCompleteParams = [obj];
+	,clearAll: function() {
+		this.collectionPointArray = [];
+		this.pointArray = [];
+		this.sketch.clear();
+		this.setup();
 	}
 	,drawShape: function() {
-		if(this.dot == null) {
-			return;
-		}
 		this.sketch.clear();
 		var bg = this.sketch.makeRectangle(0,0,Globals.w,Globals.h,false);
 		bg.set_id("bg color");
-		var bgGroup = this.sketch.makeGroup([bg]);
-		bgGroup.set_id("sketch background");
-		bgGroup.set_fill(sketcher_util_ColorUtil.getColourObj(this._color1));
-		if(this.isDebug) {
-			sketcher_debug_Grid.gridDots(this.sketch,this.grid);
-		}
-		var _g = 0;
-		var _g1 = this.shapeArray.length;
-		while(_g < _g1) {
-			var i = _g++;
-			var sh = this.shapeArray[i];
-		}
-		var text = this.sketch.makeText(this.toString(),this.get_w2(),this.get_h2());
+		bg.set_fill(sketcher_util_ColorUtil.getColourObj(this._color1));
+		var tmp = this.isDebug;
+		var text = this.sketch.makeText(this.message,this.get_w2(),this.get_h2());
 		text.set_fontFamily(this.fontFamly);
 		text.set_fontSizePx(100);
 		text.set_fontWeight("800");
 		text.set_textAlign(sketcher_draw_TextAlignType.Center);
 		text.set_fillColor(sketcher_util_ColorUtil.getColourObj(this._color4));
-		var circle = this.sketch.makeCircle(this.dot.x,this.dot.y,50);
-		circle.set_strokeWeight(10);
-		circle.set_strokeColor(sketcher_util_ColorUtil.getColourObj(this._color3));
-		circle.set_fillOpacity(0);
+		text.set_fillOpacity(.3);
+		var _g = 0;
+		var _g1 = this.collectionPointArray.length;
+		while(_g < _g1) {
+			var i = _g++;
+			var _pointArray = this.collectionPointArray[i];
+			var polyline = this.sketch.makePolyLinePoint(_pointArray);
+			polyline.set_strokeWeight(this.strokeWeight);
+			polyline.set_strokeColor(sketcher_util_ColorUtil.getColourObj(this._color3));
+			polyline.set_fillOpacity(0);
+			polyline.set_lineCap("round");
+			polyline.set_lineJoin("round");
+			if(this.useAnchor) {
+				var _g2 = 0;
+				var _g11 = _pointArray.length;
+				while(_g2 < _g11) {
+					var i1 = _g2++;
+					var p = _pointArray[i1];
+					var circle = this.sketch.makeCircle(p.x,p.y,10);
+					circle.set_fillOpacity(0);
+					circle.set_strokeColor(sketcher_util_ColorUtil.getColourObj(this._color2));
+					circle.set_strokeWeight(3);
+				}
+			}
+		}
 		this.sketch.update();
 	}
 	,setup: function() {
-		console.log("src/art/CC100.hx:187:","SETUP :: " + this.toString());
-		this.dot = this.createShape(100,{ x : this.get_w2(), y : this.get_h2()});
-		this.createQuickSettings();
-		this.onAnimateHandler(this.dot);
+		console.log("src/art/CCHanddrawn.hx:230:","SETUP :: " + this.toString());
 		var colorArray = sketcher_util_ColorUtil.niceColor100SortedString[sketcher_util_MathUtil.randomInt(sketcher_util_ColorUtil.niceColor100SortedString.length - 1)];
 		var int = Std.parseInt(StringTools.replace(colorArray[0],"#","0x"));
 		this._color0 = { r : int >> 16 & 255, g : int >> 8 & 255, b : int & 255};
@@ -1096,32 +1070,14 @@ art_CC100.prototype = $extend(SketcherBase.prototype,{
 		this.grid = new sketcher_util_GridUtil(Globals.w,Globals.h);
 		this.grid.setCellSize(this._cellsize);
 		this.grid.setIsCenterPoint(true);
-		this.shapeArray = [];
-		var _g = 0;
-		var _g1 = this.grid.array.length;
-		while(_g < _g1) {
-			var i = _g++;
-			this.shapeArray.push(this.createShape(i,this.grid.array[i]));
-		}
 	}
 	,draw: function() {
-		this.drawShape();
+		if(this.useAnimation) {
+			this.drawShape();
+		}
 	}
-	,__class__: art_CC100
+	,__class__: art_CCHanddrawn
 });
-var art_FizzyText = function() {
-	this.explode = function() {
-		console.log("src/art/CC100.hx:226:","BOOM");
-	};
-	this.displayOutline = false;
-	this.speed = 0.8;
-	this.message = "dat.gui";
-};
-$hxClasses["art.FizzyText"] = art_FizzyText;
-art_FizzyText.__name__ = "art.FizzyText";
-art_FizzyText.prototype = {
-	__class__: art_FizzyText
-};
 var haxe_IMap = function() { };
 $hxClasses["haxe.IMap"] = haxe_IMap;
 haxe_IMap.__name__ = "haxe.IMap";
@@ -1983,33 +1939,6 @@ sketcher_AST.__name__ = "sketcher.AST";
 var sketcher_App = function() { };
 $hxClasses["sketcher.App"] = sketcher_App;
 sketcher_App.__name__ = "sketcher.App";
-var sketcher_debug_Grid = function() {
-};
-$hxClasses["sketcher.debug.Grid"] = sketcher_debug_Grid;
-sketcher_debug_Grid.__name__ = "sketcher.debug.Grid";
-sketcher_debug_Grid.gridDots = function(sketch,grid) {
-	var _circlesArray = [];
-	var _g = 0;
-	var _g1 = grid.array.length;
-	while(_g < _g1) {
-		var i = _g++;
-		var point = grid.array[i];
-		var circle = sketch.makeCircle(point.x,point.y,3);
-		circle.set_fillColor(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.PINK,1));
-		circle.set_strokeOpacity(0);
-		_circlesArray.push(circle);
-	}
-	var rect = sketch.makeRectangle(grid.x,grid.y,grid.width,grid.height,false);
-	rect.set_strokeWeight(1);
-	rect.set_strokeColor(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.GRAY,0.5));
-	rect.set_fillOpacity(0);
-	_circlesArray.push(rect);
-	var circleGroup = sketch.makeGroup(_circlesArray);
-	circleGroup.set_id("grid debug layer");
-};
-sketcher_debug_Grid.prototype = {
-	__class__: sketcher_debug_Grid
-};
 var sketcher_draw_AST = function() { };
 $hxClasses["sketcher.draw.AST"] = sketcher_draw_AST;
 sketcher_draw_AST.__name__ = "sketcher.draw.AST";
@@ -2372,10 +2301,10 @@ sketcher_draw_Circle.prototype = $extend(sketcher_draw_Base.prototype,{
 			_a1 = arr2[3];
 		} else if(value1.indexOf("rgb") != -1) {
 			value1 = StringTools.replace(StringTools.replace(value1,"rgb(",""),")","");
-			var arr3 = value1.split(",");
-			_r1 = arr3[0];
-			_g1 = arr3[1];
-			_b1 = arr3[2];
+			var arr11 = value1.split(",");
+			_r1 = arr11[0];
+			_g1 = arr11[1];
+			_b1 = arr11[2];
 		} else if(value1.indexOf("#") != -1) {
 			var int1 = Std.parseInt(StringTools.replace(value1,"#","0x"));
 			var rgb_r1 = int1 >> 16 & 255;
@@ -2546,8 +2475,7 @@ sketcher_draw_Group.prototype = $extend(sketcher_draw_Base.prototype,{
 	}
 	,ctx: function(ctx) {
 		if(!sketcher_draw_Group.ISWARN) {
-			window.console.warn("The Group (" + this.get_id() + ") changes like transforms/etc. doesn't work for canvas (yet)");
-			window.console.groupCollapsed("Group (" + this.get_id() + ")");
+			window.console.groupCollapsed("Group (" + this.get_id() + ") info canvas");
 			window.console.info("the following work\n- strokeOpacity\n- fillOpacity\n- fillColor\n- strokeColor\n- strokeWeight");
 			window.console.groupEnd();
 			sketcher_draw_Group.ISWARN = true;
@@ -2585,7 +2513,7 @@ sketcher_draw_Group.prototype = $extend(sketcher_draw_Base.prototype,{
 		this.set_strokeOpacity(0);
 	}
 	,test: function() {
-		console.log("sketcher/draw/Group.hx:91:","test if casting works");
+		console.log("sketcher/draw/Group.hx:90:","test if casting works");
 	}
 	,get_arr: function() {
 		return this.arr;
@@ -2790,10 +2718,10 @@ sketcher_draw_Line.prototype = $extend(sketcher_draw_Base.prototype,{
 			_a1 = arr2[3];
 		} else if(value1.indexOf("rgb") != -1) {
 			value1 = StringTools.replace(StringTools.replace(value1,"rgb(",""),")","");
-			var arr3 = value1.split(",");
-			_r1 = arr3[0];
-			_g1 = arr3[1];
-			_b1 = arr3[2];
+			var arr11 = value1.split(",");
+			_r1 = arr11[0];
+			_g1 = arr11[1];
+			_b1 = arr11[2];
 		} else if(value1.indexOf("#") != -1) {
 			var int1 = Std.parseInt(StringTools.replace(value1,"#","0x"));
 			var rgb_r1 = int1 >> 16 & 255;
@@ -2981,10 +2909,10 @@ sketcher_draw_PolyLine.prototype = $extend(sketcher_draw_Base.prototype,{
 			_a1 = arr2[3];
 		} else if(value1.indexOf("rgb") != -1) {
 			value1 = StringTools.replace(StringTools.replace(value1,"rgb(",""),")","");
-			var arr3 = value1.split(",");
-			_r1 = arr3[0];
-			_g1 = arr3[1];
-			_b1 = arr3[2];
+			var arr11 = value1.split(",");
+			_r1 = arr11[0];
+			_g1 = arr11[1];
+			_b1 = arr11[2];
 		} else if(value1.indexOf("#") != -1) {
 			var int1 = Std.parseInt(StringTools.replace(value1,"#","0x"));
 			var rgb_r1 = int1 >> 16 & 255;
@@ -3200,10 +3128,10 @@ sketcher_draw_Rectangle.prototype = $extend(sketcher_draw_Base.prototype,{
 			_a1 = arr2[3];
 		} else if(value1.indexOf("rgb") != -1) {
 			value1 = StringTools.replace(StringTools.replace(value1,"rgb(",""),")","");
-			var arr3 = value1.split(",");
-			_r1 = arr3[0];
-			_g1 = arr3[1];
-			_b1 = arr3[2];
+			var arr11 = value1.split(",");
+			_r1 = arr11[0];
+			_g1 = arr11[1];
+			_b1 = arr11[2];
 		} else if(value1.indexOf("#") != -1) {
 			var int1 = Std.parseInt(StringTools.replace(value1,"#","0x"));
 			var rgb_r1 = int1 >> 16 & 255;
@@ -3559,6 +3487,168 @@ var sketcher_draw_TextBaselineType = $hxEnums["sketcher.draw.TextBaselineType"] 
 	,Bottom: {_hx_index:1,__enum__:"sketcher.draw.TextBaselineType",toString:$estr}
 	,Middle: {_hx_index:2,__enum__:"sketcher.draw.TextBaselineType",toString:$estr}
 	,Default: {_hx_index:3,__enum__:"sketcher.draw.TextBaselineType",toString:$estr}
+};
+var sketcher_export_TypeSupported = function() { };
+$hxClasses["sketcher.export.TypeSupported"] = sketcher_export_TypeSupported;
+sketcher_export_TypeSupported.__name__ = "sketcher.export.TypeSupported";
+sketcher_export_TypeSupported.checkTypes = function() {
+	if(window.MediaRecorder == undefined) {
+		window.console.error("MediaRecorder not supported, boo");
+	} else {
+		var contentTypes = ["video/ogg","audio/ogg;codecs=vorbis","video/mp4","audio/mp4","video/mp4;codecs=avc1","video/mp4;codecs=\"avc1.4d002a\"","audio/mpeg","video/x-matroska","video/x-matroska;codecs=avc1","video/quicktime","video/webm","video/webm;codecs=daala","video/webm;codecs=h264","audio/webm;codecs=opus","audio/webm;codecs=\"opus\"","video/webm;codecs=vp8","video/webm;codecs=\"vp8\"","video/webm;codecs=\"vp9\"","audio/webm;codecs=\"vorbis\"","video/webm;codecs=\"vp8,vorbis\"","video/webm;codecs=\"vp9,opus\"","video/invalid"];
+		window.console.groupCollapsed("Check if codecs work:");
+		var _g = 0;
+		var _g1 = contentTypes.length;
+		while(_g < _g1) {
+			var i = _g++;
+			if(MediaRecorder.isTypeSupported(contentTypes[i])) {
+				window.console.log("%c Is " + contentTypes[i] + " supported? Maybe!","background: #444; color: #bada55; padding: 2px; border-radius:2px");
+			} else {
+				window.console.log("Is " + contentTypes[i] + " supported? " + (MediaRecorder.isTypeSupported(contentTypes[i]) ? "Maybe!" : "Nope :("));
+			}
+		}
+		window.console.groupEnd();
+	}
+};
+var sketcher_export_VideoExport = function() {
+	sketcher_export_TypeSupported.checkTypes();
+};
+$hxClasses["sketcher.export.VideoExport"] = sketcher_export_VideoExport;
+sketcher_export_VideoExport.__name__ = "sketcher.export.VideoExport";
+sketcher_export_VideoExport.prototype = {
+	setCanvas: function(canvas) {
+		this.canvas = canvas;
+	}
+	,setAudio: function(audio,isActive) {
+		if(isActive == null) {
+			isActive = true;
+		}
+		var _gthis = this;
+		this.audioEl = audio;
+		if(isActive) {
+			this.audioEl.onplay = function() {
+				window.console.info("Play audio");
+				_gthis.startRecording();
+				return;
+			};
+			this.audioEl.onpause = function() {
+				window.console.info("Stop audio");
+				_gthis.stopRecording();
+				return;
+			};
+		}
+	}
+	,setDownload: function(downloadButton) {
+		this.downloadButtonEl = downloadButton;
+		this.downloadButtonEl.classList.add("disabled");
+	}
+	,setOptions: function(options) {
+		this.options = options;
+	}
+	,setVideo: function(video) {
+		this.videoEl = video;
+	}
+	,setup: function() {
+		if(this.options == null) {
+			this.options = { bitsPerSecond : 5500000};
+		}
+		this.setupCombineRecordings();
+		if(this.audioEl != null) {
+			this.setupAudioRecording();
+		}
+		this.setupCanvasRecording();
+	}
+	,start: function() {
+		window.console.info("start recording");
+		this.startRecording();
+	}
+	,stop: function() {
+		window.console.info("stop recording");
+		this.stopRecording();
+	}
+	,startRecording: function() {
+		if(this.audioRecorder != null) {
+			this.audioRecorder.start();
+		}
+		this.videoRecorder.start();
+		this.combineRecorder.start();
+	}
+	,stopRecording: function() {
+		if(this.audioRecorder != null) {
+			this.audioRecorder.stop();
+		}
+		this.videoRecorder.stop();
+		this.combineRecorder.stop();
+	}
+	,setupCanvasRecording: function() {
+		var _gthis = this;
+		var canvasStream = this.canvas.captureStream();
+		var videoTrack = canvasStream.getTracks()[0];
+		this.combinedStream.addTrack(videoTrack);
+		this.videoRecorder = new MediaRecorder(canvasStream,this.options);
+		this.videoRecorder.ondataavailable = function(e) {
+			_gthis.onVideoRecordingReady(e);
+			return;
+		};
+	}
+	,setupAudioRecording: function() {
+		var _gthis = this;
+		window.console.info("setupAudioRecording");
+		var audioContext = new AudioContext();
+		var source = audioContext.createMediaElementSource(this.audioEl);
+		source.connect(audioContext.destination);
+		var audioStream = audioContext.createMediaStreamDestination();
+		var audioTrack = audioStream.stream.getTracks()[0];
+		this.combinedStream.addTrack(audioTrack);
+		source.connect(audioStream);
+		this.audioRecorder = new MediaRecorder(audioStream.stream,this.options);
+		this.audioRecorder.ondataavailable = function(e) {
+			_gthis.onAudioRecordingReady(e);
+			return;
+		};
+	}
+	,setupCombineRecordings: function() {
+		var _gthis = this;
+		window.console.info("setupCombineRecordings");
+		this.combinedStream = new MediaStream();
+		this.combineRecorder = new MediaRecorder(this.combinedStream,this.options);
+		this.combineRecorder.ondataavailable = function(e) {
+			_gthis.onCombineRecordingReady(e);
+			return;
+		};
+	}
+	,onAudioRecordingReady: function(e) {
+		window.console.info("Finished onAudioRecordingReady. Got blob:",e.data);
+	}
+	,onVideoRecordingReady: function(e) {
+		window.console.info("Finished onVideoRecordingReady. Got blob:",e.data);
+	}
+	,onCombineRecordingReady: function(e) {
+		window.console.info("Finished onCombineRecordingReady. Got blob:",e.data);
+		var videoUrl = URL.createObjectURL(e.data);
+		var blob = new Blob([e.data]);
+		if(this.videoEl != null) {
+			this.videoEl.src = videoUrl;
+			this.videoEl.play();
+		}
+		var filename = "RecordedVideo_" + new Date().getTime();
+		if(this.downloadButtonEl != null) {
+			this.downloadButtonEl.href = videoUrl;
+			this.downloadButtonEl.download = "" + filename + ".webm";
+			this.downloadButtonEl.classList.remove("disabled");
+		} else {
+			var d = window.document.createElement("a");
+			d.setAttribute("style","padding:10px; margin:10px; background-color:silver;");
+			d.innerText = "Download: " + filename + ".webm (" + blob.size + " bytes)";
+			d.href = videoUrl;
+			d.download = "" + filename + ".webm";
+			d.classList.remove("disabled");
+			window.document.body.appendChild(d);
+		}
+		window.console.info("Successfully recorded " + blob.size + " bytes of " + blob.type + " media.");
+		window.console.warn("#!/bin/bash" + "\n\n" + "# [mck] for now just convert to mp4 seems the best solution" + "\n\n" + "say \"start convert webm to mp4\"" + "\n" + ("ffmpeg -i " + filename + ".webm\n") + ("ffmpeg -y -i " + filename + ".webm " + filename + ".mp4\n") + ("ffmpeg -y -r 30 -i " + filename + ".webm -c:v libx264 -strict -2 -pix_fmt yuv420p -shortest -filter:v \"setpts=0.5*PTS\" " + filename + "_30fps.mp4\n") + ("ffmpeg -y -r 60 -i " + filename + ".webm -c:v libx264 -strict -2 -pix_fmt yuv420p -shortest -filter:v \"setpts=0.5*PTS\" " + filename + "_60fps.mp4\n") + ("ffmpeg -y -r 30 -i " + filename + ".mp4 -c:v libx264 -strict -2 -pix_fmt yuv420p -shortest -filter:v \"setpts=0.5*PTS\" " + filename + "_30fps_inputmp4.mp4") + "\n" + "say \"end convert webm to mp4\"");
+	}
+	,__class__: sketcher_export_VideoExport
 };
 var sketcher_lets_Easing = function() { };
 $hxClasses["sketcher.lets.Easing"] = sketcher_lets_Easing;
