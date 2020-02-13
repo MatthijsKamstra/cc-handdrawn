@@ -8,7 +8,10 @@ using StringTools;
 class Main {
 	var count:Int;
 	var hash:String;
-	var ccTypeArray:Array<Class<Dynamic>> = [art.CCHanddrawn];
+	var ccTypeArray:Array<Class<Dynamic>> = [ //
+		art.CCHanddrawn, //
+		art.CCDrips, //
+	];
 
 	public function new() {
 		trace('START :: main');
@@ -26,7 +29,7 @@ class Main {
 		hash = js.Browser.location.hash;
 		hash = hash.replace('#', '');
 
-		var clazz = Type.resolveClass('${hash}');
+		var clazz = Type.resolveClass('art.${hash}');
 		if (clazz == null) {
 			// make sure if it's not in the list, show the latest Sketch
 			clazz = ccTypeArray[ccTypeArray.length - 1];

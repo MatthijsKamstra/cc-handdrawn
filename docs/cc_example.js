@@ -7,6 +7,22 @@ function $extend(from, fields) {
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
+var EReg = function(r,opt) {
+	this.r = new RegExp(r,opt.split("u").join(""));
+};
+$hxClasses["EReg"] = EReg;
+EReg.__name__ = "EReg";
+EReg.prototype = {
+	match: function(s) {
+		if(this.r.global) {
+			this.r.lastIndex = 0;
+		}
+		this.r.m = this.r.exec(s);
+		this.r.s = s;
+		return this.r.m != null;
+	}
+	,__class__: EReg
+};
 var HxOverrides = function() { };
 $hxClasses["HxOverrides"] = HxOverrides;
 HxOverrides.__name__ = "HxOverrides";
@@ -58,11 +74,11 @@ Lambda.has = function(it,elt) {
 	return false;
 };
 var Main = function() {
-	this.ccTypeArray = [art_CCHanddrawn];
+	this.ccTypeArray = [art_CCHanddrawn,art_CCDrips];
 	var _gthis = this;
-	console.log("src/Main.hx:14:","START :: main");
+	haxe_Log.trace("START :: main",{ fileName : "src/Main.hx", lineNumber : 17, className : "Main", methodName : "new"});
 	window.document.addEventListener("DOMContentLoaded",function(event) {
-		window.console.log("" + model_constants_App.NAME + " Dom ready :: build: " + "2020-02-13 16:30:36");
+		window.console.log("" + model_constants_App.NAME + " Dom ready :: build: " + "2020-02-13 20:12:13");
 		_gthis.setupArt();
 		_gthis.setupNav();
 	});
@@ -76,7 +92,7 @@ Main.prototype = {
 	setupArt: function() {
 		this.hash = window.location.hash;
 		this.hash = StringTools.replace(this.hash,"#","");
-		var name = "" + this.hash;
+		var name = "art." + this.hash;
 		var clazz = $hxClasses[name];
 		if(clazz == null) {
 			clazz = this.ccTypeArray[this.ccTypeArray.length - 1];
@@ -291,7 +307,7 @@ Sketcher.prototype = {
 			element.appendChild(this.canvas);
 			break;
 		default:
-			console.log("Sketcher.hx:99:","case '" + this.settings.get_type().toLowerCase() + "': trace ('" + this.settings.get_type().toLowerCase() + "');");
+			haxe_Log.trace("case '" + this.settings.get_type().toLowerCase() + "': trace ('" + this.settings.get_type().toLowerCase() + "');",{ fileName : "Sketcher.hx", lineNumber : 99, className : "Sketcher", methodName : "appendTo"});
 		}
 		return this;
 	}
@@ -513,7 +529,7 @@ Sketcher.prototype = {
 			this.element.innerHTML = _xml;
 			break;
 		case "webgl":
-			console.log("Sketcher.hx:530:","webgl");
+			haxe_Log.trace("webgl",{ fileName : "Sketcher.hx", lineNumber : 530, className : "Sketcher", methodName : "update"});
 			var _g3 = 0;
 			var _g12 = this.baseArray.length;
 			while(_g3 < _g12) {
@@ -526,7 +542,7 @@ Sketcher.prototype = {
 			}
 			break;
 		default:
-			console.log("Sketcher.hx:539:","case '" + this.settings.get_type() + "': trace ('" + this.settings.get_type() + "');");
+			haxe_Log.trace("case '" + this.settings.get_type() + "': trace ('" + this.settings.get_type() + "');",{ fileName : "Sketcher.hx", lineNumber : 539, className : "Sketcher", methodName : "update"});
 		}
 	}
 	,__class__: Sketcher
@@ -538,7 +554,7 @@ var SketcherBase = function(settings) {
 	this.isDebug = false;
 	this.isDrawActive = true;
 	if(this.isDebug) {
-		console.log("SketcherBase.hx:26:","START :: " + this.toString());
+		haxe_Log.trace("START :: " + this.toString(),{ fileName : "SketcherBase.hx", lineNumber : 26, className : "SketcherBase", methodName : "new"});
 	}
 	if(settings == null) {
 		var stageW = 1080;
@@ -550,7 +566,7 @@ var SketcherBase = function(settings) {
 		settings.set_elementID("sketcher-canvas-wrapper");
 	}
 	if(settings != null && settings.get_element() != null) {
-		console.log("SketcherBase.hx:41:",settings.get_element());
+		haxe_Log.trace(settings.get_element(),{ fileName : "SketcherBase.hx", lineNumber : 41, className : "SketcherBase", methodName : "new"});
 	}
 	if(settings.get_elementID() != null && window.document.getElementById(settings.get_elementID()) == null) {
 		var div0 = window.document.createElement("div");
@@ -589,12 +605,12 @@ SketcherBase.prototype = {
 	}
 	,setup: function() {
 		if(this.isDebug) {
-			console.log("SketcherBase.hx:104:","SETUP :: " + this.toString() + " -> override public function draw()");
+			haxe_Log.trace("SETUP :: " + this.toString() + " -> override public function draw()",{ fileName : "SketcherBase.hx", lineNumber : 104, className : "SketcherBase", methodName : "setup"});
 		}
 	}
 	,draw: function() {
 		if(this.isDebug) {
-			console.log("SketcherBase.hx:112:","DRAW :: " + this.toString() + " -> override public function draw()");
+			haxe_Log.trace("DRAW :: " + this.toString() + " -> override public function draw()",{ fileName : "SketcherBase.hx", lineNumber : 112, className : "SketcherBase", methodName : "draw"});
 		}
 	}
 	,__export: function() {
@@ -924,6 +940,71 @@ Xml.prototype = {
 	}
 	,__class__: Xml
 };
+var art_CCDrips = function() {
+	this.circleRadius = 50;
+	this.isDebug = true;
+	SketcherBase.call(this);
+};
+$hxClasses["art.CCDrips"] = art_CCDrips;
+art_CCDrips.__name__ = "art.CCDrips";
+art_CCDrips.__super__ = SketcherBase;
+art_CCDrips.prototype = $extend(SketcherBase.prototype,{
+	drawShape: function() {
+		var _g = 0;
+		var _g1 = this.grid.array.length;
+		while(_g < _g1) {
+			var k = _g++;
+			var cp = this.grid.array[k];
+			this.sketch.makeX(Math.round(cp.x),Math.round(cp.y));
+			var randomCircleRadius = sketcher_util_MathUtil.random(this.circleRadius / 2,this.circleRadius);
+			var circle = this.sketch.makeCircle(Math.round(cp.x),Math.round(cp.y),Math.round(randomCircleRadius));
+			circle.set_fill(" black ");
+			circle.noStroke();
+			var _g2 = 0;
+			while(_g2 < 10) {
+				var i = _g2++;
+				var rp_x = cp.x + sketcher_util_MathUtil.random(-randomCircleRadius,randomCircleRadius);
+				var rp_y = cp.y + sketcher_util_MathUtil.random(-randomCircleRadius,randomCircleRadius);
+				var spatter = this.sketch.makeCircle(Math.round(rp_x),Math.round(rp_y),Math.round(sketcher_util_MathUtil.random(randomCircleRadius / 2)));
+				spatter.set_fill(sketcher_util_ColorUtil.rgb(0));
+				spatter.noStroke();
+			}
+			var dripWeight = sketcher_util_MathUtil.randomInt(10,Math.round(randomCircleRadius / 2));
+			var rp_x1 = cp.x + sketcher_util_MathUtil.random(-randomCircleRadius + dripWeight,randomCircleRadius - dripWeight);
+			var rp_y1 = cp.y + sketcher_util_MathUtil.random(-randomCircleRadius + dripWeight,randomCircleRadius - dripWeight);
+			var line = this.sketch.makeLine(Math.round(rp_x1),Math.round(rp_y1),Math.round(rp_x1),Math.round(rp_y1 + sketcher_util_MathUtil.random(randomCircleRadius,randomCircleRadius + 100)));
+			line.set_lineCap("round");
+			line.set_stroke(sketcher_util_ColorUtil.rgb(0));
+			line.set_lineWeight(dripWeight);
+			var dripWeight1 = sketcher_util_MathUtil.randomInt(10,Math.round(randomCircleRadius / 2));
+			var rp_x2 = cp.x + sketcher_util_MathUtil.random(-randomCircleRadius + dripWeight1,randomCircleRadius - dripWeight1);
+			var rp_y2 = cp.y + sketcher_util_MathUtil.random(-randomCircleRadius + dripWeight1,randomCircleRadius - dripWeight1);
+			var line1 = this.sketch.makeLine(Math.round(rp_x2),Math.round(rp_y2),Math.round(rp_x2),Math.round(rp_y2 + sketcher_util_MathUtil.random(randomCircleRadius,randomCircleRadius + 100)));
+			line1.set_lineCap("round");
+			line1.set_stroke(sketcher_util_ColorUtil.rgb(0));
+			line1.set_lineWeight(dripWeight1);
+			var dripWeight2 = sketcher_util_MathUtil.randomInt(10,Math.round(randomCircleRadius / 2));
+			var rp_x3 = cp.x + sketcher_util_MathUtil.random(-randomCircleRadius + dripWeight2,randomCircleRadius - dripWeight2);
+			var rp_y3 = cp.y + sketcher_util_MathUtil.random(-randomCircleRadius + dripWeight2,randomCircleRadius - dripWeight2);
+			var line2 = this.sketch.makeLine(Math.round(rp_x3),Math.round(rp_y3),Math.round(rp_x3),Math.round(rp_y3 + sketcher_util_MathUtil.random(randomCircleRadius,randomCircleRadius + 100)));
+			line2.set_lineCap("round");
+			line2.set_stroke(sketcher_util_ColorUtil.rgb(0));
+			line2.set_lineWeight(dripWeight2);
+		}
+		this.sketch.update();
+	}
+	,setup: function() {
+		haxe_Log.trace("SETUP :: " + this.toString(),{ fileName : "src/art/CCDrips.hx", lineNumber : 61, className : "art.CCDrips", methodName : "setup"});
+		this.grid = new sketcher_util_GridUtil(Globals.w,Globals.h);
+		this.grid.setIsCenterPoint(true);
+		this.grid.setNumbered(3,3);
+	}
+	,draw: function() {
+		this.drawShape();
+		this.stop();
+	}
+	,__class__: art_CCDrips
+});
 var art_CCHanddrawn = function() {
 	this.pointArray = [];
 	this.collectionPointArray = [];
@@ -973,7 +1054,7 @@ art_CCHanddrawn.prototype = $extend(SketcherBase.prototype,{
 		this.sketch.canvas.focus();
 	}
 	,onMouseDownHandler: function(e) {
-		console.log("src/art/CCHanddrawn.hx:91:","onMouseDownHandler");
+		haxe_Log.trace("onMouseDownHandler",{ fileName : "src/art/CCHanddrawn.hx", lineNumber : 90, className : "art.CCHanddrawn", methodName : "onMouseDownHandler"});
 		this.pointArray = [];
 		this.collectionPointArray.push(this.pointArray);
 		this.isMouseDown = true;
@@ -985,7 +1066,7 @@ art_CCHanddrawn.prototype = $extend(SketcherBase.prototype,{
 		}
 	}
 	,onMouseUpHandler: function(e) {
-		console.log("src/art/CCHanddrawn.hx:109:","onMouseUpHandler");
+		haxe_Log.trace("onMouseUpHandler",{ fileName : "src/art/CCHanddrawn.hx", lineNumber : 108, className : "art.CCHanddrawn", methodName : "onMouseUpHandler"});
 		this.isMouseDown = false;
 	}
 	,initDatGui: function() {
@@ -1020,7 +1101,7 @@ art_CCHanddrawn.prototype = $extend(SketcherBase.prototype,{
 		bg.set_id("bg color");
 		bg.set_fill(sketcher_util_ColorUtil.getColourObj(this._color1));
 		var tmp = this.isDebug;
-		var text = this.sketch.makeText(this.message,this.get_w2(),this.get_h2());
+		var text = this.sketch.makeText(this.message,this.get_w2(),this.get_h4());
 		text.set_fontFamily(this.fontFamly);
 		text.set_fontSizePx(100);
 		text.set_fontWeight("800");
@@ -1054,7 +1135,7 @@ art_CCHanddrawn.prototype = $extend(SketcherBase.prototype,{
 		this.sketch.update();
 	}
 	,setup: function() {
-		console.log("src/art/CCHanddrawn.hx:230:","SETUP :: " + this.toString());
+		haxe_Log.trace("SETUP :: " + this.toString(),{ fileName : "src/art/CCHanddrawn.hx", lineNumber : 229, className : "art.CCHanddrawn", methodName : "setup"});
 		var colorArray = sketcher_util_ColorUtil.niceColor100SortedString[sketcher_util_MathUtil.randomInt(sketcher_util_ColorUtil.niceColor100SortedString.length - 1)];
 		var int = Std.parseInt(StringTools.replace(colorArray[0],"#","0x"));
 		this._color0 = { r : int >> 16 & 255, g : int >> 8 & 255, b : int & 255};
@@ -1082,6 +1163,32 @@ var haxe_IMap = function() { };
 $hxClasses["haxe.IMap"] = haxe_IMap;
 haxe_IMap.__name__ = "haxe.IMap";
 haxe_IMap.__isInterface__ = true;
+var haxe_Log = function() { };
+$hxClasses["haxe.Log"] = haxe_Log;
+haxe_Log.__name__ = "haxe.Log";
+haxe_Log.formatOutput = function(v,infos) {
+	var str = Std.string(v);
+	if(infos == null) {
+		return str;
+	}
+	var pstr = infos.fileName + ":" + infos.lineNumber;
+	if(infos.customParams != null) {
+		var _g = 0;
+		var _g1 = infos.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			str += ", " + Std.string(v1);
+		}
+	}
+	return pstr + ": " + str;
+};
+haxe_Log.trace = function(v,infos) {
+	var str = haxe_Log.formatOutput(v,infos);
+	if(typeof(console) != "undefined" && console.log != null) {
+		console.log(str);
+	}
+};
 var haxe_Timer = function(time_ms) {
 	var me = this;
 	this.id = setInterval(function() {
@@ -2004,7 +2111,7 @@ sketcher_draw_Base.prototype = {
 		return str;
 	}
 	,clone: function() {
-		console.log("sketcher/draw/Base.hx:159:","WIP");
+		haxe_Log.trace("WIP",{ fileName : "sketcher/draw/Base.hx", lineNumber : 159, className : "sketcher.draw.Base", methodName : "clone"});
 		return js_Boot.__cast(JSON.parse(JSON.stringify(this)) , sketcher_draw_Base);
 	}
 	,convertID: function(id) {
@@ -2301,10 +2408,10 @@ sketcher_draw_Circle.prototype = $extend(sketcher_draw_Base.prototype,{
 			_a1 = arr2[3];
 		} else if(value1.indexOf("rgb") != -1) {
 			value1 = StringTools.replace(StringTools.replace(value1,"rgb(",""),")","");
-			var arr11 = value1.split(",");
-			_r1 = arr11[0];
-			_g1 = arr11[1];
-			_b1 = arr11[2];
+			var arr3 = value1.split(",");
+			_r1 = arr3[0];
+			_g1 = arr3[1];
+			_b1 = arr3[2];
 		} else if(value1.indexOf("#") != -1) {
 			var int1 = Std.parseInt(StringTools.replace(value1,"#","0x"));
 			var rgb_r1 = int1 >> 16 & 255;
@@ -2344,7 +2451,7 @@ sketcher_draw_Circle.prototype = $extend(sketcher_draw_Base.prototype,{
 	,gl: function(gl) {
 	}
 	,debug: function() {
-		console.log("sketcher/draw/Circle.hx:106:","" + this.toString());
+		haxe_Log.trace("" + this.toString(),{ fileName : "sketcher/draw/Circle.hx", lineNumber : 106, className : "sketcher.draw.Circle", methodName : "debug"});
 	}
 	,get_radius: function() {
 		return this.radius;
@@ -2513,7 +2620,7 @@ sketcher_draw_Group.prototype = $extend(sketcher_draw_Base.prototype,{
 		this.set_strokeOpacity(0);
 	}
 	,test: function() {
-		console.log("sketcher/draw/Group.hx:90:","test if casting works");
+		haxe_Log.trace("test if casting works",{ fileName : "sketcher/draw/Group.hx", lineNumber : 90, className : "sketcher.draw.Group", methodName : "test"});
 	}
 	,get_arr: function() {
 		return this.arr;
@@ -2564,7 +2671,7 @@ sketcher_draw_Image.prototype = $extend(sketcher_draw_Base.prototype,{
 		ctx.imageSmoothingQuality = "high";
 		var img = new Image();
 		img.onload = function() {
-			console.log("sketcher/draw/Image.hx:65:","image.onload");
+			haxe_Log.trace("image.onload",{ fileName : "sketcher/draw/Image.hx", lineNumber : 65, className : "sketcher.draw.Image", methodName : "ctx"});
 			var prop = img.height / img.width;
 			if(img.width < img.height) {
 				prop = img.width / img.height;
@@ -2718,10 +2825,10 @@ sketcher_draw_Line.prototype = $extend(sketcher_draw_Base.prototype,{
 			_a1 = arr2[3];
 		} else if(value1.indexOf("rgb") != -1) {
 			value1 = StringTools.replace(StringTools.replace(value1,"rgb(",""),")","");
-			var arr11 = value1.split(",");
-			_r1 = arr11[0];
-			_g1 = arr11[1];
-			_b1 = arr11[2];
+			var arr3 = value1.split(",");
+			_r1 = arr3[0];
+			_g1 = arr3[1];
+			_b1 = arr3[2];
 		} else if(value1.indexOf("#") != -1) {
 			var int1 = Std.parseInt(StringTools.replace(value1,"#","0x"));
 			var rgb_r1 = int1 >> 16 & 255;
@@ -2909,10 +3016,10 @@ sketcher_draw_PolyLine.prototype = $extend(sketcher_draw_Base.prototype,{
 			_a1 = arr2[3];
 		} else if(value1.indexOf("rgb") != -1) {
 			value1 = StringTools.replace(StringTools.replace(value1,"rgb(",""),")","");
-			var arr11 = value1.split(",");
-			_r1 = arr11[0];
-			_g1 = arr11[1];
-			_b1 = arr11[2];
+			var arr3 = value1.split(",");
+			_r1 = arr3[0];
+			_g1 = arr3[1];
+			_b1 = arr3[2];
 		} else if(value1.indexOf("#") != -1) {
 			var int1 = Std.parseInt(StringTools.replace(value1,"#","0x"));
 			var rgb_r1 = int1 >> 16 & 255;
@@ -3006,7 +3113,7 @@ sketcher_draw_Polygon.prototype = $extend(sketcher_draw_Base.prototype,{
 	}
 	,getPoint: function(id) {
 		if(id * 2 > this.get_arr().length) {
-			console.log("sketcher/draw/Polygon.hx:44:","not in this length");
+			haxe_Log.trace("not in this length",{ fileName : "sketcher/draw/Polygon.hx", lineNumber : 44, className : "sketcher.draw.Polygon", methodName : "getPoint"});
 		}
 		var p = { x : this.get_arr()[id * 2], y : this.get_arr()[id * 2 + 1]};
 		return p;
@@ -3128,10 +3235,10 @@ sketcher_draw_Rectangle.prototype = $extend(sketcher_draw_Base.prototype,{
 			_a1 = arr2[3];
 		} else if(value1.indexOf("rgb") != -1) {
 			value1 = StringTools.replace(StringTools.replace(value1,"rgb(",""),")","");
-			var arr11 = value1.split(",");
-			_r1 = arr11[0];
-			_g1 = arr11[1];
-			_b1 = arr11[2];
+			var arr3 = value1.split(",");
+			_r1 = arr3[0];
+			_g1 = arr3[1];
+			_b1 = arr3[2];
 		} else if(value1.indexOf("#") != -1) {
 			var int1 = Std.parseInt(StringTools.replace(value1,"#","0x"));
 			var rgb_r1 = int1 >> 16 & 255;
@@ -3488,6 +3595,145 @@ var sketcher_draw_TextBaselineType = $hxEnums["sketcher.draw.TextBaselineType"] 
 	,Middle: {_hx_index:2,__enum__:"sketcher.draw.TextBaselineType",toString:$estr}
 	,Default: {_hx_index:3,__enum__:"sketcher.draw.TextBaselineType",toString:$estr}
 };
+var sketcher_export_ExportFile = function() { };
+$hxClasses["sketcher.export.ExportFile"] = sketcher_export_ExportFile;
+sketcher_export_ExportFile.__name__ = "sketcher.export.ExportFile";
+sketcher_export_ExportFile.downloadWebGLImage = function(domElement,isJpg,fileName) {
+	if(fileName == null) {
+		fileName = "test";
+	}
+	if(isJpg == null) {
+		isJpg = false;
+	}
+	var imgData;
+	var ext = isJpg ? "jpg" : "png";
+	try {
+		var strDownloadMime = "image/octet-stream";
+		var strMime = "image/jpeg";
+		imgData = domElement.toDataURL(strMime);
+		window.console.log(imgData);
+		sketcher_export_ExportFile.saveFile(StringTools.replace(imgData,strMime,strDownloadMime),fileName + ("." + ext));
+	} catch( e ) {
+		var e1 = ((e) instanceof js__$Boot_HaxeError) ? e.val : e;
+		window.console.log("Browser does not support taking screenshot of 3d context");
+		return;
+	}
+};
+sketcher_export_ExportFile.saveFile = function(strData,fileName) {
+	var link = window.document.createElement("a");
+	window.document.body.appendChild(link);
+	link.href = strData;
+	link.download = fileName;
+	link.click();
+	window.document.body.removeChild(link);
+};
+sketcher_export_ExportFile.downloadImage = function(ctx,isJpg,fileName) {
+	if(isJpg == null) {
+		isJpg = false;
+	}
+	if(fileName == null) {
+		var hash = window.location.hash;
+		hash = StringTools.replace(hash,"#","").toLowerCase();
+		if(hash == "") {
+			hash = "image";
+		}
+		fileName = "" + hash + "-" + new Date().getTime();
+	}
+	var link = window.document.createElement("a");
+	link.href = ctx.canvas.toDataURL(isJpg ? "image/jpeg" : "",1);
+	link.download = fileName;
+	link.click();
+};
+sketcher_export_ExportFile.onBase64Handler = function(ctx,isJpg) {
+	if(isJpg == null) {
+		isJpg = false;
+	}
+	var base64 = ctx.canvas.toDataURL(isJpg ? "image/jpeg" : "",1);
+	sketcher_export_ExportFile.clipboard(base64);
+};
+sketcher_export_ExportFile.downloadTextFile = function(text,fileName) {
+	if(fileName == null) {
+		fileName = "CC-txt-" + new Date().getTime() + ".txt";
+	}
+	var el = window.document.createElement("a");
+	el.href = "data:text/plain;charset=utf-8," + encodeURIComponent(text);
+	el.download = fileName;
+	el.style.display = "none";
+	window.document.body.appendChild(el);
+	el.click();
+	window.document.body.removeChild(el);
+};
+sketcher_export_ExportFile.convertStr2Href = function(str) {
+	return "data:text/plain;charset=utf-8," + encodeURIComponent(str);
+};
+sketcher_export_ExportFile.clipboard = function(text) {
+	var win = "Ctrl+C";
+	var mac = "Cmd+C";
+	var copyCombo = win;
+	var userAgent = window.navigator.userAgent;
+	var ereg = new EReg("iPhone|iPod|iPad|Android|BlackBerry","i");
+	var ismac = ereg.match(userAgent);
+	if(ismac) {
+		copyCombo = mac;
+	}
+	window.prompt("Copy to clipboard: " + copyCombo + ", Enter",text);
+};
+sketcher_export_ExportFile.downloadImageBg = function(ctx,isJpg,fileName,isTransparant) {
+	if(isTransparant == null) {
+		isTransparant = false;
+	}
+	if(isJpg == null) {
+		isJpg = false;
+	}
+	haxe_Log.trace(ctx,{ fileName : "sketcher/export/FileExport.hx", lineNumber : 131, className : "sketcher.export.ExportFile", methodName : "downloadImageBg", customParams : [isJpg,fileName,isTransparant]});
+	var canvas = ctx.canvas;
+	var ext = isJpg ? "jpg" : "png";
+	if(fileName == null) {
+		var hash = window.location.hash;
+		hash = StringTools.replace(hash,"#","").toLowerCase();
+		if(hash == "") {
+			hash = "image";
+		}
+		fileName = "" + hash + "-" + new Date().getTime();
+	}
+	var w = canvas.width;
+	var h = canvas.height;
+	var compositeOperation;
+	var data = ctx.getImageData(0,0,w,h);
+	if(!isTransparant) {
+		compositeOperation = ctx.globalCompositeOperation;
+		ctx.globalCompositeOperation = "destination-over";
+		ctx.fillStyle = "#ffffff";
+		ctx.fillRect(0,0,w,h);
+		var imageData = canvas.toDataURL("image/png");
+		ctx.clearRect(0,0,w,h);
+		ctx.putImageData(data,0,0);
+		ctx.globalCompositeOperation = compositeOperation;
+	}
+	var link = window.document.createElement("a");
+	link.style.cssText = "display:none";
+	link.download = fileName + ("." + ext);
+	if(!HTMLCanvasElement.prototype.toBlob) {
+		haxe_Log.trace("There is no blob",{ fileName : "sketcher/export/FileExport.hx", lineNumber : 190, className : "sketcher.export.ExportFile", methodName : "downloadImageBg"});
+		link.href = ctx.canvas.toDataURL(isJpg ? "image/jpeg" : "",1);
+		link.click();
+		link.remove();
+	} else {
+		haxe_Log.trace("Attack of the blob",{ fileName : "sketcher/export/FileExport.hx", lineNumber : 196, className : "sketcher.export.ExportFile", methodName : "downloadImageBg"});
+		ctx.canvas.toBlob(function(blob) {
+			link.href = URL.createObjectURL(blob);
+			link.click();
+			link.remove();
+		},isJpg ? "image/jpeg" : "",1);
+	}
+	window.document.body.appendChild(link);
+};
+sketcher_export_ExportFile.prototype = {
+	toString: function() {
+		return "[ExportFile]";
+	}
+	,__class__: sketcher_export_ExportFile
+};
 var sketcher_export_TypeSupported = function() { };
 $hxClasses["sketcher.export.TypeSupported"] = sketcher_export_TypeSupported;
 sketcher_export_TypeSupported.__name__ = "sketcher.export.TypeSupported";
@@ -3541,6 +3787,10 @@ sketcher_export_VideoExport.prototype = {
 	,setDownload: function(downloadButton) {
 		this.downloadButtonEl = downloadButton;
 		this.downloadButtonEl.classList.add("disabled");
+	}
+	,setBash: function(bashloadButton) {
+		this.bashButtonEl = bashloadButton;
+		this.bashButtonEl.classList.add("disabled");
 	}
 	,setOptions: function(options) {
 		this.options = options;
@@ -3632,21 +3882,35 @@ sketcher_export_VideoExport.prototype = {
 			this.videoEl.play();
 		}
 		var filename = "RecordedVideo_" + new Date().getTime();
+		var btnStyle = "color:black; padding:10px; margin:10px; background-color:silver;display: inline-block;font-weight: 400;text-align: center;white-space: nowrap;vertical-align: middle;";
+		var bash = "#!/bin/bash" + "\n\n" + "# [mck] for now just convert to mp4 seems the best solution" + "\n\n" + "say \"start convert webm to mp4\"" + "\n" + ("ffmpeg -i " + filename + ".webm\n") + ("ffmpeg -y -i " + filename + ".webm " + filename + ".mp4\n") + ("ffmpeg -y -r 30 -i " + filename + ".webm -c:v libx264 -strict -2 -pix_fmt yuv420p -shortest -filter:v \"setpts=0.5*PTS\" " + filename + "_30fps.mp4\n") + ("ffmpeg -y -r 60 -i " + filename + ".webm -c:v libx264 -strict -2 -pix_fmt yuv420p -shortest -filter:v \"setpts=0.5*PTS\" " + filename + "_60fps.mp4\n") + ("ffmpeg -y -r 30 -i " + filename + ".mp4 -c:v libx264 -strict -2 -pix_fmt yuv420p -shortest -filter:v \"setpts=0.5*PTS\" " + filename + "_30fps_inputmp4.mp4") + "\n" + "say \"end convert webm to mp4\"";
 		if(this.downloadButtonEl != null) {
 			this.downloadButtonEl.href = videoUrl;
 			this.downloadButtonEl.download = "" + filename + ".webm";
 			this.downloadButtonEl.classList.remove("disabled");
 		} else {
 			var d = window.document.createElement("a");
-			d.setAttribute("style","padding:10px; margin:10px; background-color:silver;");
+			d.setAttribute("style",btnStyle);
 			d.innerText = "Download: " + filename + ".webm (" + blob.size + " bytes)";
 			d.href = videoUrl;
 			d.download = "" + filename + ".webm";
 			d.classList.remove("disabled");
 			window.document.body.appendChild(d);
 		}
+		if(this.bashButtonEl != null) {
+			this.bashButtonEl.href = sketcher_export_ExportFile.convertStr2Href(bash);
+			this.bashButtonEl.download = "" + filename + ".sh";
+			this.bashButtonEl.classList.remove("disabled");
+		} else {
+			var d1 = window.document.createElement("a");
+			d1.setAttribute("style",btnStyle);
+			d1.innerText = "Bash: " + filename + ".sh";
+			d1.href = sketcher_export_ExportFile.convertStr2Href(bash);
+			d1.download = "" + filename + ".sh";
+			d1.classList.remove("disabled");
+			window.document.body.appendChild(d1);
+		}
 		window.console.info("Successfully recorded " + blob.size + " bytes of " + blob.type + " media.");
-		window.console.warn("#!/bin/bash" + "\n\n" + "# [mck] for now just convert to mp4 seems the best solution" + "\n\n" + "say \"start convert webm to mp4\"" + "\n" + ("ffmpeg -i " + filename + ".webm\n") + ("ffmpeg -y -i " + filename + ".webm " + filename + ".mp4\n") + ("ffmpeg -y -r 30 -i " + filename + ".webm -c:v libx264 -strict -2 -pix_fmt yuv420p -shortest -filter:v \"setpts=0.5*PTS\" " + filename + "_30fps.mp4\n") + ("ffmpeg -y -r 60 -i " + filename + ".webm -c:v libx264 -strict -2 -pix_fmt yuv420p -shortest -filter:v \"setpts=0.5*PTS\" " + filename + "_60fps.mp4\n") + ("ffmpeg -y -r 30 -i " + filename + ".mp4 -c:v libx264 -strict -2 -pix_fmt yuv420p -shortest -filter:v \"setpts=0.5*PTS\" " + filename + "_30fps_inputmp4.mp4") + "\n" + "say \"end convert webm to mp4\"");
 	}
 	,__class__: sketcher_export_VideoExport
 };
@@ -3960,7 +4224,7 @@ sketcher_lets_Go.prototype = {
 		if(isTimeBased == null) {
 			isTimeBased = true;
 		}
-		console.log("sketcher/lets/Go.hx:217:","Fixme: this doesn\t work right now");
+		haxe_Log.trace("Fixme: this doesn\t work right now",{ fileName : "sketcher/lets/Go.hx", lineNumber : 217, className : "sketcher.lets.Go", methodName : "isTimeBased"});
 		this._isTimeBased = isTimeBased;
 		this._duration = this._duration / this.FRAME_RATE | 0;
 		return this;
@@ -4264,7 +4528,7 @@ sketcher_lets_Go.prototype = {
 	}
 	,init: function() {
 		if(this._isTimeBased) {
-			console.log("sketcher/lets/Go.hx:487:","TODO: build timebased animation");
+			haxe_Log.trace("TODO: build timebased animation",{ fileName : "sketcher/lets/Go.hx", lineNumber : 487, className : "sketcher.lets.Go", methodName : "init"});
 		} else if(sketcher_lets_Go._requestId == null) {
 			sketcher_lets_Go._requestId = window.requestAnimationFrame($bind(this,this.onEnterFrameHandler));
 		}
@@ -4289,7 +4553,7 @@ sketcher_lets_Go.prototype = {
 	}
 	,update: function() {
 		if(this._delay > 0 && this._isTimeBased) {
-			console.log("sketcher/lets/Go.hx:526:","FIXME this doesn't work yet");
+			haxe_Log.trace("FIXME this doesn't work yet",{ fileName : "sketcher/lets/Go.hx", lineNumber : 526, className : "sketcher.lets.Go", methodName : "update"});
 		}
 		if(this._delay > 0) {
 			this._delay--;
@@ -4297,7 +4561,7 @@ sketcher_lets_Go.prototype = {
 		}
 		if(!this._isDelayDone) {
 			if(this.DEBUG) {
-				console.log("sketcher/lets/Go.hx:533:","should trigger only once: " + this._id);
+				haxe_Log.trace("should trigger only once: " + this._id,{ fileName : "sketcher/lets/Go.hx", lineNumber : 533, className : "sketcher.lets.Go", methodName : "update"});
 			}
 			if(Reflect.isFunction(this._options.onAnimationStart)) {
 				var func = this._options.onAnimationStart;
@@ -4343,9 +4607,9 @@ sketcher_lets_Go.prototype = {
 				var __speed = __map_reserved["speed"] != null ? _this4.getReserved("speed") : _this4.h["speed"];
 				var _this5 = this._props;
 				var __rad = __map_reserved["radius"] != null ? _this5.getReserved("radius") : _this5.h["radius"];
-				console.log("sketcher/lets/Go.hx:591:","cx: " + __cx.to + ",  cy: " + __cy.to + " , " + __angle.to + ", " + __speed.to + ", " + __rad.to);
-				console.log("sketcher/lets/Go.hx:602:","" + n1 + " == \"angle\" : " + Std.string(n1 == "angle"));
-				console.log("sketcher/lets/Go.hx:604:",this._target);
+				haxe_Log.trace("cx: " + __cx.to + ",  cy: " + __cy.to + " , " + __angle.to + ", " + __speed.to + ", " + __rad.to,{ fileName : "sketcher/lets/Go.hx", lineNumber : 591, className : "sketcher.lets.Go", methodName : "updateProperties"});
+				haxe_Log.trace("" + n1 + " == \"angle\" : " + Std.string(n1 == "angle"),{ fileName : "sketcher/lets/Go.hx", lineNumber : 602, className : "sketcher.lets.Go", methodName : "updateProperties"});
+				haxe_Log.trace(this._target,{ fileName : "sketcher/lets/Go.hx", lineNumber : 604, className : "sketcher.lets.Go", methodName : "updateProperties"});
 				if(n1 == "angle") {
 					var aa = __angle.to + __speed.to;
 					Reflect.setProperty(this._target,n1,aa);
@@ -4357,7 +4621,7 @@ sketcher_lets_Go.prototype = {
 	}
 	,complete: function() {
 		if(this.DEBUG) {
-			console.log("sketcher/lets/Go.hx:627:","complete :: \"" + this._id + "\", _duration: " + this._duration + ", _seconds: " + this._seconds + ", _initTime: " + this._initTime + " / _tweens.length: " + sketcher_lets_Go._tweens.length);
+			haxe_Log.trace("complete :: \"" + this._id + "\", _duration: " + this._duration + ", _seconds: " + this._seconds + ", _initTime: " + this._initTime + " / _tweens.length: " + sketcher_lets_Go._tweens.length,{ fileName : "sketcher/lets/Go.hx", lineNumber : 627, className : "sketcher.lets.Go", methodName : "complete"});
 		}
 		if(this._isYoyo) {
 			var n = this._props.keys();
@@ -4748,6 +5012,14 @@ sketcher_util_EmbedUtil.bootstrap = function(callback,callbackArray) {
 	sketcher_util_EmbedUtil.bootstrapScript("bootstrap-popper","https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js","sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo");
 	sketcher_util_EmbedUtil.bootstrapScript("bootstrap-bootstrap","https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js","sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6");
 };
+sketcher_util_EmbedUtil.zip = function(callback,callbackArray) {
+	if(!sketcher_util_EmbedUtil.check("jszip")) {
+		sketcher_util_EmbedUtil.script("jszip","https://cdnjs.cloudflare.com/ajax/libs/jszip/3.2.0/jszip.min.js",callback,["jszip"]);
+	}
+	if(!sketcher_util_EmbedUtil.check("jsfilesaver")) {
+		sketcher_util_EmbedUtil.script("jsfilesaver","https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js",callback,["jsfilesaver"]);
+	}
+};
 sketcher_util_EmbedUtil.embedGoogleFont = function(family,callback,callbackArray) {
 	var _id = "embededGoogleFonts";
 	var _url = "https://fonts.googleapis.com/css?family=";
@@ -4878,7 +5150,7 @@ sketcher_util_GridUtil.prototype = {
 		return this;
 	}
 	,calc: function() {
-		console.log("sketcher/util/GridUtil.hx:263:","WIP");
+		haxe_Log.trace("WIP",{ fileName : "sketcher/util/GridUtil.hx", lineNumber : 263, className : "sketcher.util.GridUtil", methodName : "calc"});
 		return this;
 	}
 	,setPosition: function(x,y) {
@@ -5149,7 +5421,7 @@ sketcher_util_MathUtil.dist = function(x1,y1,x2,y2) {
 };
 sketcher_util_MathUtil.pythagoreanTheorem = function(a,b,c) {
 	if(a == null && b == null && c == null) {
-		console.log("sketcher/util/MathUtil.hx:106:","Really? Perhaps you should use some data");
+		haxe_Log.trace("Really? Perhaps you should use some data",{ fileName : "sketcher/util/MathUtil.hx", lineNumber : 106, className : "sketcher.util.MathUtil", methodName : "pythagoreanTheorem"});
 		return 0;
 	}
 	var value = 0.0;
