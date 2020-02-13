@@ -1,19 +1,43 @@
 package art;
 
+// import ;
 import sketcher.draw.AST.LineCap;
 
 class CCDrips extends SketcherBase {
 	var grid:GridUtil;
-	var circleRadius = 50;
+	var circleRadius = 85;
+	// dat
+	var message = 'drips';
+	var refresh = function() {}
 
 	public function new() {
 		// use debug?
 		this.isDebug = true;
 
 		super();
+
+		// embed dat.GUI and init
+		EmbedUtil.datgui(initDatGui);
+	}
+
+	function initDatGui() {
+		var guiSettings:js.dat.gui.GUI.GUIOptions = {
+			name: "drips",
+			closed: true
+		};
+		var gui = new js.dat.gui.GUI(guiSettings);
+		gui.add(this, 'message');
+		gui.add(this, 'circleRadius');
+		var refreshController = gui.add(this, 'refresh');
+		refreshController.onFinishChange((e) -> {
+			drawShape();
+		});
+		// gui.add(this, 'strokeWeight');
+		// gui.close();
 	}
 
 	function drawShape() {
+		sketch.clear();
 		for (k in 0...grid.array.length) {
 			// center point
 			var cp:Point = grid.array[k];

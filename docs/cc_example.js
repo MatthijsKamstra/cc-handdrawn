@@ -78,7 +78,7 @@ var Main = function() {
 	var _gthis = this;
 	haxe_Log.trace("START :: main",{ fileName : "src/Main.hx", lineNumber : 17, className : "Main", methodName : "new"});
 	window.document.addEventListener("DOMContentLoaded",function(event) {
-		window.console.log("" + model_constants_App.NAME + " Dom ready :: build: " + "2020-02-13 20:12:13");
+		window.console.log("" + model_constants_App.NAME + " Dom ready :: build: " + "2020-02-14 00:11:36");
 		_gthis.setupArt();
 		_gthis.setupNav();
 	});
@@ -307,7 +307,7 @@ Sketcher.prototype = {
 			element.appendChild(this.canvas);
 			break;
 		default:
-			haxe_Log.trace("case '" + this.settings.get_type().toLowerCase() + "': trace ('" + this.settings.get_type().toLowerCase() + "');",{ fileName : "Sketcher.hx", lineNumber : 99, className : "Sketcher", methodName : "appendTo"});
+			haxe_Log.trace("case '" + this.settings.get_type().toLowerCase() + "': trace ('" + this.settings.get_type().toLowerCase() + "');",{ fileName : "Sketcher.hx", lineNumber : 102, className : "Sketcher", methodName : "appendTo"});
 		}
 		return this;
 	}
@@ -529,7 +529,7 @@ Sketcher.prototype = {
 			this.element.innerHTML = _xml;
 			break;
 		case "webgl":
-			haxe_Log.trace("webgl",{ fileName : "Sketcher.hx", lineNumber : 530, className : "Sketcher", methodName : "update"});
+			haxe_Log.trace("webgl",{ fileName : "Sketcher.hx", lineNumber : 533, className : "Sketcher", methodName : "update"});
 			var _g3 = 0;
 			var _g12 = this.baseArray.length;
 			while(_g3 < _g12) {
@@ -542,7 +542,7 @@ Sketcher.prototype = {
 			}
 			break;
 		default:
-			haxe_Log.trace("case '" + this.settings.get_type() + "': trace ('" + this.settings.get_type() + "');",{ fileName : "Sketcher.hx", lineNumber : 539, className : "Sketcher", methodName : "update"});
+			haxe_Log.trace("case '" + this.settings.get_type() + "': trace ('" + this.settings.get_type() + "');",{ fileName : "Sketcher.hx", lineNumber : 542, className : "Sketcher", methodName : "update"});
 		}
 	}
 	,__class__: Sketcher
@@ -551,10 +551,12 @@ var Globals = function() { };
 $hxClasses["Globals"] = Globals;
 Globals.__name__ = "Globals";
 var SketcherBase = function(settings) {
+	this.description = "";
+	this.patternName = "";
 	this.isDebug = false;
 	this.isDrawActive = true;
 	if(this.isDebug) {
-		haxe_Log.trace("START :: " + this.toString(),{ fileName : "SketcherBase.hx", lineNumber : 26, className : "SketcherBase", methodName : "new"});
+		haxe_Log.trace("START :: " + this.toString(),{ fileName : "SketcherBase.hx", lineNumber : 32, className : "SketcherBase", methodName : "new"});
 	}
 	if(settings == null) {
 		var stageW = 1080;
@@ -566,7 +568,7 @@ var SketcherBase = function(settings) {
 		settings.set_elementID("sketcher-canvas-wrapper");
 	}
 	if(settings != null && settings.get_element() != null) {
-		haxe_Log.trace(settings.get_element(),{ fileName : "SketcherBase.hx", lineNumber : 41, className : "SketcherBase", methodName : "new"});
+		haxe_Log.trace(settings.get_element(),{ fileName : "SketcherBase.hx", lineNumber : 47, className : "SketcherBase", methodName : "new"});
 	}
 	if(settings.get_elementID() != null && window.document.getElementById(settings.get_elementID()) == null) {
 		var div0 = window.document.createElement("div");
@@ -582,11 +584,74 @@ var SketcherBase = function(settings) {
 	window.addEventListener(Globals.KEY_UP,$bind(this,this._keyUp),false);
 	this.setup();
 	this._draw();
+	window.console.groupCollapsed("Default cc-sketcher keyboard shortcuts are activated");
+	window.console.info("\n• [cmd + r] = reload page\n\n• [cmd + s] = save jpg\n\n• [cmd + shift + s] = save png\n\n• [cmd + ctrl + s] = save transparant png\n\n• [cmd + alt + s] = save svg");
+	window.console.groupEnd();
 };
 $hxClasses["SketcherBase"] = SketcherBase;
 SketcherBase.__name__ = "SketcherBase";
 SketcherBase.prototype = {
 	_keyDown: function(e) {
+		if(e.metaKey == true && e.key == "r") {
+			window.console.log("[cmd + r] = reload page");
+			window.location.reload();
+		}
+		if(e.metaKey == true && e.key == "s" && e.shiftKey == false && e.ctrlKey == false) {
+			e.preventDefault();
+			e.stopPropagation();
+			window.console.log("[cmd + s] = save jpg");
+			if(this.sketch.settings.get_type() == "svg") {
+				haxe_Log.trace("svg-jpg",{ fileName : "SketcherBase.hx", lineNumber : 99, className : "SketcherBase", methodName : "_keyDown"});
+				sketcher_export_FileExport.svg2Canvas(this.sketch.getSVGElement(),true,this.getFileName());
+			} else {
+				haxe_Log.trace("canvas-jpg",{ fileName : "SketcherBase.hx", lineNumber : 103, className : "SketcherBase", methodName : "_keyDown"});
+				sketcher_export_FileExport.downloadImageBg(this.sketch.canvas.getContext("2d",null),true,this.getFileName());
+			}
+		}
+		if(e.metaKey == true && e.key == "s" && e.shiftKey == true) {
+			e.preventDefault();
+			e.stopPropagation();
+			window.console.log("[cmd + shift + s] = save png");
+			if(this.sketch.settings.get_type() == "svg") {
+				haxe_Log.trace("svg-png",{ fileName : "SketcherBase.hx", lineNumber : 116, className : "SketcherBase", methodName : "_keyDown"});
+				sketcher_export_FileExport.svg2Canvas(this.sketch.getSVGElement(),false,this.getFileName());
+			} else {
+				haxe_Log.trace("canvas-png",{ fileName : "SketcherBase.hx", lineNumber : 120, className : "SketcherBase", methodName : "_keyDown"});
+				sketcher_export_FileExport.downloadImageBg(this.sketch.canvas.getContext("2d",null),false,this.getFileName());
+			}
+		}
+		if(e.metaKey == true && e.key == "s" && e.ctrlKey == true) {
+			e.preventDefault();
+			e.stopPropagation();
+			window.console.log("[cmd + ctrl + s] = save transparant png");
+			if(this.sketch.settings.get_type() == "svg") {
+				haxe_Log.trace("svg-png-transparant",{ fileName : "SketcherBase.hx", lineNumber : 131, className : "SketcherBase", methodName : "_keyDown"});
+				sketcher_export_FileExport.svg2Canvas(this.sketch.getSVGElement(),false,this.getFileName(),true);
+			} else {
+				haxe_Log.trace("canvas-png-transparant",{ fileName : "SketcherBase.hx", lineNumber : 135, className : "SketcherBase", methodName : "_keyDown"});
+				sketcher_export_FileExport.downloadImageBg(this.sketch.canvas.getContext("2d",null),false,this.getFileName(),true);
+			}
+		}
+		if(e.metaKey == true && (e.code == "KeyS" && e.altKey == true)) {
+			e.preventDefault();
+			e.stopPropagation();
+			window.console.log("[cmd + alt + s] = save svg");
+			if(this.sketch.settings.get_type() == "svg") {
+				haxe_Log.trace("svg-text",{ fileName : "SketcherBase.hx", lineNumber : 148, className : "SketcherBase", methodName : "_keyDown"});
+				sketcher_export_FileExport.downloadTextFile(this.sketch.svg,"" + this.getFileName() + ".svg");
+			} else {
+				haxe_Log.trace("no canvas-2-text",{ fileName : "SketcherBase.hx", lineNumber : 153, className : "SketcherBase", methodName : "_keyDown"});
+			}
+		}
+		if(e.metaKey == true && e.key == "f") {
+			if(!Globals.isFullscreen) {
+				this.openFullscreen();
+				Globals.isFullscreen = true;
+			} else {
+				this.closeFullscreen();
+				Globals.isFullscreen = false;
+			}
+		}
 		if(e.key == " ") {
 			this.draw();
 		}
@@ -605,12 +670,12 @@ SketcherBase.prototype = {
 	}
 	,setup: function() {
 		if(this.isDebug) {
-			haxe_Log.trace("SETUP :: " + this.toString() + " -> override public function draw()",{ fileName : "SketcherBase.hx", lineNumber : 104, className : "SketcherBase", methodName : "setup"});
+			haxe_Log.trace("SETUP :: " + this.toString() + " -> override public function draw()",{ fileName : "SketcherBase.hx", lineNumber : 198, className : "SketcherBase", methodName : "setup"});
 		}
 	}
 	,draw: function() {
 		if(this.isDebug) {
-			haxe_Log.trace("DRAW :: " + this.toString() + " -> override public function draw()",{ fileName : "SketcherBase.hx", lineNumber : 112, className : "SketcherBase", methodName : "draw"});
+			haxe_Log.trace("DRAW :: " + this.toString() + " -> override public function draw()",{ fileName : "SketcherBase.hx", lineNumber : 206, className : "SketcherBase", methodName : "draw"});
 		}
 	}
 	,__export: function() {
@@ -630,6 +695,29 @@ SketcherBase.prototype = {
 	}
 	,onKeyDown: function(e) {
 	}
+	,openFullscreen: function() {
+		var elem = window.document.documentElement;
+		if(elem.requestFullscreen != null) {
+			elem.requestFullscreen();
+		} else if(elem.mozRequestFullScreen) {
+			elem.mozRequestFullScreen();
+		} else if(elem.webkitRequestFullscreen) {
+			elem.webkitRequestFullscreen();
+		} else if(elem.msRequestFullscreen) {
+			elem.msRequestFullscreen();
+		}
+	}
+	,closeFullscreen: function() {
+		if(window.document.exitFullscreen != null) {
+			window.document.exitFullscreen();
+		} else if(window.document.mozCancelFullScreen) {
+			window.document.mozCancelFullScreen();
+		} else if(window.document.webkitExitFullscreen) {
+			window.document.webkitExitFullscreen();
+		} else if(window.document.msExitFullscreen) {
+			window.document.msExitFullscreen();
+		}
+	}
 	,get_w2: function() {
 		return Globals.w / 2;
 	}
@@ -647,6 +735,14 @@ SketcherBase.prototype = {
 	}
 	,get_h3: function() {
 		return Globals.h / 3;
+	}
+	,getFileName: function() {
+		if(this.patternName == "" && this.description == "") {
+			this.patternName = "CC-Sketcher - MatthijsKamstra";
+		} else if(this.patternName == "" && this.description != "") {
+			this.patternName = this.description;
+		}
+		return "" + StringTools.replace(this.patternName," ","_") + "-" + new Date().getTime();
 	}
 	,toString: function() {
 		var c = js_Boot.getClass(this);
@@ -941,15 +1037,32 @@ Xml.prototype = {
 	,__class__: Xml
 };
 var art_CCDrips = function() {
-	this.circleRadius = 50;
+	this.refresh = function() {
+	};
+	this.message = "drips";
+	this.circleRadius = 85;
 	this.isDebug = true;
 	SketcherBase.call(this);
+	sketcher_util_EmbedUtil.datgui($bind(this,this.initDatGui));
 };
 $hxClasses["art.CCDrips"] = art_CCDrips;
 art_CCDrips.__name__ = "art.CCDrips";
 art_CCDrips.__super__ = SketcherBase;
 art_CCDrips.prototype = $extend(SketcherBase.prototype,{
-	drawShape: function() {
+	initDatGui: function() {
+		var _gthis = this;
+		var guiSettings = { name : "drips", closed : true};
+		var gui = new dat.gui.GUI(guiSettings);
+		gui.add(this,"message");
+		gui.add(this,"circleRadius");
+		var refreshController = gui.add(this,"refresh");
+		refreshController.onFinishChange(function(e) {
+			_gthis.drawShape();
+			return;
+		});
+	}
+	,drawShape: function() {
+		this.sketch.clear();
 		var _g = 0;
 		var _g1 = this.grid.array.length;
 		while(_g < _g1) {
@@ -994,7 +1107,7 @@ art_CCDrips.prototype = $extend(SketcherBase.prototype,{
 		this.sketch.update();
 	}
 	,setup: function() {
-		haxe_Log.trace("SETUP :: " + this.toString(),{ fileName : "src/art/CCDrips.hx", lineNumber : 61, className : "art.CCDrips", methodName : "setup"});
+		haxe_Log.trace("SETUP :: " + this.toString(),{ fileName : "src/art/CCDrips.hx", lineNumber : 85, className : "art.CCDrips", methodName : "setup"});
 		this.grid = new sketcher_util_GridUtil(Globals.w,Globals.h);
 		this.grid.setIsCenterPoint(true);
 		this.grid.setNumbered(3,3);
@@ -2110,8 +2223,17 @@ sketcher_draw_Base.prototype = {
 		}
 		return str;
 	}
+	,noStroke: function() {
+		this.set_lineWeight(0);
+		this.set_strokeColor("transparant");
+		this.set_strokeOpacity(0);
+	}
+	,noFill: function() {
+		this.set_fillOpacity(0);
+		this.set_fillColor("transparant");
+	}
 	,clone: function() {
-		haxe_Log.trace("WIP",{ fileName : "sketcher/draw/Base.hx", lineNumber : 159, className : "sketcher.draw.Base", methodName : "clone"});
+		haxe_Log.trace("WIP",{ fileName : "sketcher/draw/Base.hx", lineNumber : 170, className : "sketcher.draw.Base", methodName : "clone"});
 		return js_Boot.__cast(JSON.parse(JSON.stringify(this)) , sketcher_draw_Base);
 	}
 	,convertID: function(id) {
@@ -2341,11 +2463,7 @@ sketcher_draw_Circle.__name__ = "sketcher.draw.Circle";
 sketcher_draw_Circle.__interfaces__ = [sketcher_draw_IBase];
 sketcher_draw_Circle.__super__ = sketcher_draw_Base;
 sketcher_draw_Circle.prototype = $extend(sketcher_draw_Base.prototype,{
-	noStroke: function() {
-		this.set_lineWeight(0);
-		this.set_stroke("transparant");
-	}
-	,svg: function(settings) {
+	svg: function(settings) {
 		this.xml.set("cx",Std.string(this.get_x()));
 		this.xml.set("cy",Std.string(this.get_y()));
 		this.xml.set("r",Std.string(this.get_radius()));
@@ -2451,7 +2569,7 @@ sketcher_draw_Circle.prototype = $extend(sketcher_draw_Base.prototype,{
 	,gl: function(gl) {
 	}
 	,debug: function() {
-		haxe_Log.trace("" + this.toString(),{ fileName : "sketcher/draw/Circle.hx", lineNumber : 106, className : "sketcher.draw.Circle", methodName : "debug"});
+		haxe_Log.trace("" + this.toString(),{ fileName : "sketcher/draw/Circle.hx", lineNumber : 101, className : "sketcher.draw.Circle", methodName : "debug"});
 	}
 	,get_radius: function() {
 		return this.radius;
@@ -3166,11 +3284,7 @@ sketcher_draw_Rectangle.__name__ = "sketcher.draw.Rectangle";
 sketcher_draw_Rectangle.__interfaces__ = [sketcher_draw_IBase];
 sketcher_draw_Rectangle.__super__ = sketcher_draw_Base;
 sketcher_draw_Rectangle.prototype = $extend(sketcher_draw_Base.prototype,{
-	noStroke: function() {
-		this.set_lineWeight(0);
-		this.set_strokeOpacity(0);
-	}
-	,svg: function(settings) {
+	svg: function(settings) {
 		this.xml.set("x",Std.string(this.xpos));
 		this.xml.set("y",Std.string(this.ypos));
 		this.xml.set("width",Std.string(this.get_width()));
@@ -3595,10 +3709,10 @@ var sketcher_draw_TextBaselineType = $hxEnums["sketcher.draw.TextBaselineType"] 
 	,Middle: {_hx_index:2,__enum__:"sketcher.draw.TextBaselineType",toString:$estr}
 	,Default: {_hx_index:3,__enum__:"sketcher.draw.TextBaselineType",toString:$estr}
 };
-var sketcher_export_ExportFile = function() { };
-$hxClasses["sketcher.export.ExportFile"] = sketcher_export_ExportFile;
-sketcher_export_ExportFile.__name__ = "sketcher.export.ExportFile";
-sketcher_export_ExportFile.downloadWebGLImage = function(domElement,isJpg,fileName) {
+var sketcher_export_FileExport = function() { };
+$hxClasses["sketcher.export.FileExport"] = sketcher_export_FileExport;
+sketcher_export_FileExport.__name__ = "sketcher.export.FileExport";
+sketcher_export_FileExport.downloadWebGLImage = function(domElement,isJpg,fileName) {
 	if(fileName == null) {
 		fileName = "test";
 	}
@@ -3612,14 +3726,38 @@ sketcher_export_ExportFile.downloadWebGLImage = function(domElement,isJpg,fileNa
 		var strMime = "image/jpeg";
 		imgData = domElement.toDataURL(strMime);
 		window.console.log(imgData);
-		sketcher_export_ExportFile.saveFile(StringTools.replace(imgData,strMime,strDownloadMime),fileName + ("." + ext));
+		sketcher_export_FileExport.saveFile(StringTools.replace(imgData,strMime,strDownloadMime),fileName + ("." + ext));
 	} catch( e ) {
 		var e1 = ((e) instanceof js__$Boot_HaxeError) ? e.val : e;
 		window.console.log("Browser does not support taking screenshot of 3d context");
 		return;
 	}
 };
-sketcher_export_ExportFile.saveFile = function(strData,fileName) {
+sketcher_export_FileExport.svg2Canvas = function(svg,isJpg,filename,isTransparant) {
+	if(isTransparant == null) {
+		isTransparant = false;
+	}
+	if(isJpg == null) {
+		isJpg = true;
+	}
+	var svgW = Std.parseInt(svg.getAttribute("width"));
+	var svgH = Std.parseInt(svg.getAttribute("height"));
+	var canvas = window.document.createElement("canvas");
+	var ctx = canvas.getContext("2d",null);
+	canvas.width = svgW;
+	canvas.height = svgH;
+	var image = new Image();
+	image.onload = function() {
+		if(isJpg) {
+			ctx.fillStyle = "white";
+			ctx.fillRect(0,0,canvas.width,canvas.height);
+		}
+		ctx.drawImage(image,0,0,svgW,svgH);
+		sketcher_export_FileExport.downloadImageBg(ctx,isJpg,filename,isTransparant);
+	};
+	image.src = "data:image/svg+xml," + svg.outerHTML;
+};
+sketcher_export_FileExport.saveFile = function(strData,fileName) {
 	var link = window.document.createElement("a");
 	window.document.body.appendChild(link);
 	link.href = strData;
@@ -3627,7 +3765,7 @@ sketcher_export_ExportFile.saveFile = function(strData,fileName) {
 	link.click();
 	window.document.body.removeChild(link);
 };
-sketcher_export_ExportFile.downloadImage = function(ctx,isJpg,fileName) {
+sketcher_export_FileExport.downloadImage = function(ctx,isJpg,fileName) {
 	if(isJpg == null) {
 		isJpg = false;
 	}
@@ -3644,14 +3782,14 @@ sketcher_export_ExportFile.downloadImage = function(ctx,isJpg,fileName) {
 	link.download = fileName;
 	link.click();
 };
-sketcher_export_ExportFile.onBase64Handler = function(ctx,isJpg) {
+sketcher_export_FileExport.onBase64Handler = function(ctx,isJpg) {
 	if(isJpg == null) {
 		isJpg = false;
 	}
 	var base64 = ctx.canvas.toDataURL(isJpg ? "image/jpeg" : "",1);
-	sketcher_export_ExportFile.clipboard(base64);
+	sketcher_export_FileExport.clipboard(base64);
 };
-sketcher_export_ExportFile.downloadTextFile = function(text,fileName) {
+sketcher_export_FileExport.downloadTextFile = function(text,fileName) {
 	if(fileName == null) {
 		fileName = "CC-txt-" + new Date().getTime() + ".txt";
 	}
@@ -3663,10 +3801,10 @@ sketcher_export_ExportFile.downloadTextFile = function(text,fileName) {
 	el.click();
 	window.document.body.removeChild(el);
 };
-sketcher_export_ExportFile.convertStr2Href = function(str) {
+sketcher_export_FileExport.convertStr2Href = function(str) {
 	return "data:text/plain;charset=utf-8," + encodeURIComponent(str);
 };
-sketcher_export_ExportFile.clipboard = function(text) {
+sketcher_export_FileExport.clipboard = function(text) {
 	var win = "Ctrl+C";
 	var mac = "Cmd+C";
 	var copyCombo = win;
@@ -3678,14 +3816,14 @@ sketcher_export_ExportFile.clipboard = function(text) {
 	}
 	window.prompt("Copy to clipboard: " + copyCombo + ", Enter",text);
 };
-sketcher_export_ExportFile.downloadImageBg = function(ctx,isJpg,fileName,isTransparant) {
+sketcher_export_FileExport.downloadImageBg = function(ctx,isJpg,fileName,isTransparant) {
 	if(isTransparant == null) {
 		isTransparant = false;
 	}
 	if(isJpg == null) {
 		isJpg = false;
 	}
-	haxe_Log.trace(ctx,{ fileName : "sketcher/export/FileExport.hx", lineNumber : 131, className : "sketcher.export.ExportFile", methodName : "downloadImageBg", customParams : [isJpg,fileName,isTransparant]});
+	haxe_Log.trace(ctx,{ fileName : "sketcher/export/FileExport.hx", lineNumber : 162, className : "sketcher.export.FileExport", methodName : "downloadImageBg", customParams : [isJpg,fileName,isTransparant]});
 	var canvas = ctx.canvas;
 	var ext = isJpg ? "jpg" : "png";
 	if(fileName == null) {
@@ -3714,12 +3852,12 @@ sketcher_export_ExportFile.downloadImageBg = function(ctx,isJpg,fileName,isTrans
 	link.style.cssText = "display:none";
 	link.download = fileName + ("." + ext);
 	if(!HTMLCanvasElement.prototype.toBlob) {
-		haxe_Log.trace("There is no blob",{ fileName : "sketcher/export/FileExport.hx", lineNumber : 190, className : "sketcher.export.ExportFile", methodName : "downloadImageBg"});
+		haxe_Log.trace("There is no blob",{ fileName : "sketcher/export/FileExport.hx", lineNumber : 221, className : "sketcher.export.FileExport", methodName : "downloadImageBg"});
 		link.href = ctx.canvas.toDataURL(isJpg ? "image/jpeg" : "",1);
 		link.click();
 		link.remove();
 	} else {
-		haxe_Log.trace("Attack of the blob",{ fileName : "sketcher/export/FileExport.hx", lineNumber : 196, className : "sketcher.export.ExportFile", methodName : "downloadImageBg"});
+		haxe_Log.trace("Attack of the blob",{ fileName : "sketcher/export/FileExport.hx", lineNumber : 227, className : "sketcher.export.FileExport", methodName : "downloadImageBg"});
 		ctx.canvas.toBlob(function(blob) {
 			link.href = URL.createObjectURL(blob);
 			link.click();
@@ -3728,11 +3866,11 @@ sketcher_export_ExportFile.downloadImageBg = function(ctx,isJpg,fileName,isTrans
 	}
 	window.document.body.appendChild(link);
 };
-sketcher_export_ExportFile.prototype = {
+sketcher_export_FileExport.prototype = {
 	toString: function() {
-		return "[ExportFile]";
+		return "[FileExport]";
 	}
-	,__class__: sketcher_export_ExportFile
+	,__class__: sketcher_export_FileExport
 };
 var sketcher_export_TypeSupported = function() { };
 $hxClasses["sketcher.export.TypeSupported"] = sketcher_export_TypeSupported;
@@ -3898,14 +4036,14 @@ sketcher_export_VideoExport.prototype = {
 			window.document.body.appendChild(d);
 		}
 		if(this.bashButtonEl != null) {
-			this.bashButtonEl.href = sketcher_export_ExportFile.convertStr2Href(bash);
+			this.bashButtonEl.href = sketcher_export_FileExport.convertStr2Href(bash);
 			this.bashButtonEl.download = "" + filename + ".sh";
 			this.bashButtonEl.classList.remove("disabled");
 		} else {
 			var d1 = window.document.createElement("a");
 			d1.setAttribute("style",btnStyle);
 			d1.innerText = "Bash: " + filename + ".sh";
-			d1.href = sketcher_export_ExportFile.convertStr2Href(bash);
+			d1.href = sketcher_export_FileExport.convertStr2Href(bash);
 			d1.download = "" + filename + ".sh";
 			d1.classList.remove("disabled");
 			window.document.body.appendChild(d1);
