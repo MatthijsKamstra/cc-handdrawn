@@ -74,11 +74,11 @@ Lambda.has = function(it,elt) {
 	return false;
 };
 var Main = function() {
-	this.ccTypeArray = [art_CCHanddrawn,art_CCDrips];
+	this.ccTypeArray = [art_CCHanddrawn,art_CCDrips,art_CCSpatter];
 	var _gthis = this;
-	haxe_Log.trace("START :: main",{ fileName : "src/Main.hx", lineNumber : 17, className : "Main", methodName : "new"});
+	haxe_Log.trace("START :: main",{ fileName : "src/Main.hx", lineNumber : 18, className : "Main", methodName : "new"});
 	window.document.addEventListener("DOMContentLoaded",function(event) {
-		window.console.log("" + model_constants_App.NAME + " Dom ready :: build: " + "2020-02-14 01:00:53");
+		window.console.log("" + model_constants_App.NAME + " Dom ready :: build: " + "2020-02-14 13:21:01");
 		_gthis.setupArt();
 		_gthis.setupNav();
 	});
@@ -307,7 +307,7 @@ Sketcher.prototype = {
 			element.appendChild(this.canvas);
 			break;
 		default:
-			haxe_Log.trace("case '" + this.settings.get_type().toLowerCase() + "': trace ('" + this.settings.get_type().toLowerCase() + "');",{ fileName : "Sketcher.hx", lineNumber : 102, className : "Sketcher", methodName : "appendTo"});
+			haxe_Log.trace("case '" + this.settings.get_type().toLowerCase() + "': trace ('" + this.settings.get_type().toLowerCase() + "');",{ fileName : "Sketcher.hx", lineNumber : 104, className : "Sketcher", methodName : "appendTo"});
 		}
 		return this;
 	}
@@ -352,6 +352,11 @@ Sketcher.prototype = {
 	}
 	,makeLine: function(x1,y1,x2,y2) {
 		var shape = new sketcher_draw_Line(x1,y1,x2,y2);
+		this.baseArray.push(shape);
+		return shape;
+	}
+	,makeLinePoint: function(p1,p2) {
+		var shape = new sketcher_draw_Line(p1.x,p1.y,p2.x,p2.y);
 		this.baseArray.push(shape);
 		return shape;
 	}
@@ -447,7 +452,11 @@ Sketcher.prototype = {
 		var polyline = new sketcher_draw_PolyLine([cx,cy,cx - r,cy,cx,cy,cx + r,cy,cx,cy,cx,cy - r,cx,cy,cx,cy + r,cx,cy]);
 		polyline.set_id("registration_marker_" + polyline.get_count());
 		polyline.set_desc("Registration Marker\nx: " + cx + ", y: " + cy);
-		polyline.set_stroke(color);
+		polyline.set_strokeColor(color);
+		polyline.set_strokeWeight(1);
+		polyline.set_fillColor(color);
+		polyline.set_lineCap("butt");
+		polyline.set_lineJoin("miter");
 		this.baseArray.push(polyline);
 		return polyline;
 	}
@@ -458,6 +467,8 @@ Sketcher.prototype = {
 		var polyline = new sketcher_draw_PolyLine([cx,cy,cx - r,cy,cx,cy,cx + r,cy,cx,cy,cx,cy - r,cx,cy,cx,cy + r,cx,cy]);
 		polyline.set_id("xcross_" + polyline.get_count());
 		polyline.set_desc("xcross\nx: " + cx + ", y: " + cy + ", size:" + size);
+		polyline.set_lineCap("butt");
+		polyline.set_lineJoin("bevel");
 		this.baseArray.push(polyline);
 		return polyline;
 	}
@@ -529,7 +540,7 @@ Sketcher.prototype = {
 			this.element.innerHTML = _xml;
 			break;
 		case "webgl":
-			haxe_Log.trace("webgl",{ fileName : "Sketcher.hx", lineNumber : 533, className : "Sketcher", methodName : "update"});
+			haxe_Log.trace("webgl",{ fileName : "Sketcher.hx", lineNumber : 556, className : "Sketcher", methodName : "update"});
 			var _g3 = 0;
 			var _g12 = this.baseArray.length;
 			while(_g3 < _g12) {
@@ -542,7 +553,7 @@ Sketcher.prototype = {
 			}
 			break;
 		default:
-			haxe_Log.trace("case '" + this.settings.get_type() + "': trace ('" + this.settings.get_type() + "');",{ fileName : "Sketcher.hx", lineNumber : 542, className : "Sketcher", methodName : "update"});
+			haxe_Log.trace("case '" + this.settings.get_type() + "': trace ('" + this.settings.get_type() + "');",{ fileName : "Sketcher.hx", lineNumber : 565, className : "Sketcher", methodName : "update"});
 		}
 	}
 	,__class__: Sketcher
@@ -1271,6 +1282,128 @@ art_CCHanddrawn.prototype = $extend(SketcherBase.prototype,{
 		}
 	}
 	,__class__: art_CCHanddrawn
+});
+var art_CCSpatter = function() {
+	this.refresh = function() {
+	};
+	this.isArtwork = false;
+	this.message = "spatter";
+	this._xoffset = null;
+	this._litelineWeight = 1;
+	this._lineWeight = 10;
+	this._smallSpatterCircle = 66.6666666666666714;
+	this._bigSpatterCircle = 200.;
+	this.finalSmallSpatterCircle = 66.6666666666666714;
+	this.finalBigSpatterCircle = 200.0;
+	this._divide = null;
+	this._shapeMax = 100;
+	this.isDebug = true;
+	SketcherBase.call(this);
+	sketcher_util_EmbedUtil.datgui($bind(this,this.initDatGui));
+};
+$hxClasses["art.CCSpatter"] = art_CCSpatter;
+art_CCSpatter.__name__ = "art.CCSpatter";
+art_CCSpatter.__super__ = SketcherBase;
+art_CCSpatter.prototype = $extend(SketcherBase.prototype,{
+	initDatGui: function() {
+		var _gthis = this;
+		var guiSettings = { name : "spatter", closed : true};
+		var gui = new dat.gui.GUI(guiSettings);
+		gui.add(this,"message");
+		gui.add(this,"isArtwork");
+		var refreshController = gui.add(this,"refresh");
+		refreshController.onFinishChange(function(e) {
+			_gthis.drawShape();
+			return;
+		});
+	}
+	,setup: function() {
+		haxe_Log.trace("SETUP :: " + this.toString(),{ fileName : "/Users/matthijs/Documents/GIT/cc-handdrawn/src/art/CCSpatter.hx", lineNumber : 55, className : "art.CCSpatter", methodName : "setup"});
+		this.grid = new sketcher_util_GridUtil(Globals.w,Globals.h);
+		this.grid.setIsCenterPoint(true);
+		this.grid.setNumbered(3,3);
+		this._divide = 360 / this._shapeMax;
+	}
+	,drawShape: function() {
+		this.sketch.clear();
+		this._bigSpatterCircle = this.finalBigSpatterCircle * sketcher_util_MathUtil.random(0.5,1.2);
+		this._smallSpatterCircle = this._bigSpatterCircle * sketcher_util_MathUtil.random(0.2,0.6);
+		this._xoffset = this._bigSpatterCircle;
+		var p_x = this.get_w2();
+		var p_y = this.get_h2();
+		var x = this.sketch.makeX(p_x,p_y);
+		var circle = this.sketch.makeCircle(p_x,p_y,this._bigSpatterCircle);
+		circle.set_fill(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK));
+		if(this.isArtwork) {
+			circle.setFill(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK)).setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK),this._lineWeight);
+		} else {
+			circle.noFill();
+			circle.set_strokeColor(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK));
+			circle.set_strokeWeight(this._litelineWeight);
+		}
+		var p2_x = p_x + this._xoffset;
+		var p2_y = p_y;
+		var x1 = this.sketch.makeX(p2_x,p2_y);
+		var circle1 = this.sketch.makeCircle(p2_x,p2_y,this._smallSpatterCircle);
+		if(this.isArtwork) {
+			circle1.setFill(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK)).setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK),this._lineWeight);
+		} else {
+			circle1.noFill();
+			circle1.set_strokeColor(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.RED));
+			circle1.set_strokeWeight(this._litelineWeight);
+		}
+		var bigArray = [];
+		var smallArray = [];
+		var _g = 0;
+		var _g1 = this._shapeMax;
+		while(_g < _g1) {
+			var i = _g++;
+			var angle = i * this._divide;
+			var posx = p_x + Math.cos(sketcher_util_MathUtil.radians(angle - 180)) * this._bigSpatterCircle;
+			var posy = p_y + Math.sin(sketcher_util_MathUtil.radians(angle - 180)) * this._bigSpatterCircle;
+			var posx2 = p2_x + Math.cos(sketcher_util_MathUtil.radians(angle)) * this._smallSpatterCircle;
+			var posy2 = p2_y + Math.sin(sketcher_util_MathUtil.radians(angle)) * this._smallSpatterCircle;
+			bigArray.push({ x : posx, y : posy});
+			smallArray.push({ x : posx2, y : posy2});
+			if(!this.isArtwork) {
+				var r = i == 0 ? 10 : 4;
+				var c = this.sketch.makeCircle(posx,posy,r);
+				c.noFill();
+				c.setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.GREEN),1);
+				var c2 = this.sketch.makeCircle(posx2,posy2,r);
+				c2.noFill();
+				c2.setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.GREEN),1);
+			}
+		}
+		var s1 = this._shapeMax;
+		var s2 = Math.round(this._shapeMax / 2);
+		var s3 = Math.round(this._shapeMax / 3);
+		var s4 = Math.round(this._shapeMax / 4);
+		var _g2 = 0;
+		var _g3 = s2;
+		while(_g2 < _g3) {
+			var i1 = _g2++;
+			var p1 = bigArray[i1 + s4];
+			var p2 = smallArray[i1 + s4];
+			var p3 = smallArray[i1 + s4 - 10];
+			var p4 = smallArray[i1 + s4 + 10];
+			var _lineColor = sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.GREEN);
+			var _dlineWeight = this._litelineWeight;
+			if(this.isArtwork) {
+				_lineColor = sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK);
+				_dlineWeight = this._lineWeight;
+			}
+			this.sketch.makeLinePoint(p1,p2).setStroke(_lineColor,_dlineWeight).setLineEnds();
+			this.sketch.makeLinePoint(p1,p3).setStroke(_lineColor,_dlineWeight).setLineEnds();
+			this.sketch.makeLinePoint(p1,p4).setStroke(_lineColor,_dlineWeight).setLineEnds();
+		}
+		this.sketch.update();
+	}
+	,draw: function() {
+		this.drawShape();
+		this.stop();
+	}
+	,__class__: art_CCSpatter
 });
 var haxe_IMap = function() { };
 $hxClasses["haxe.IMap"] = haxe_IMap;
@@ -2223,17 +2356,50 @@ sketcher_draw_Base.prototype = {
 		}
 		return str;
 	}
+	,setStroke: function(color,weight,opacity) {
+		if(opacity == null) {
+			opacity = 1;
+		}
+		if(weight == null) {
+			weight = 1;
+		}
+		this.set_strokeColor(color);
+		this.set_strokeWeight(weight);
+		this.set_strokeOpacity(opacity);
+		return this;
+	}
 	,noStroke: function() {
 		this.set_lineWeight(0);
 		this.set_strokeColor("transparant");
 		this.set_strokeOpacity(0);
+		return this;
+	}
+	,setFill: function(color,opacity) {
+		if(opacity == null) {
+			opacity = 1;
+		}
+		this.set_fillColor(color);
+		this.set_fillOpacity(1);
+		return this;
 	}
 	,noFill: function() {
 		this.set_fillOpacity(0);
 		this.set_fillColor("transparant");
+		return this;
+	}
+	,setLineEnds: function(linecap,linejoin) {
+		if(linejoin == null) {
+			linejoin = "round";
+		}
+		if(linecap == null) {
+			linecap = "round";
+		}
+		this.set_lineCap(linecap);
+		this.set_lineJoin(linejoin);
+		return this;
 	}
 	,clone: function() {
-		haxe_Log.trace("WIP",{ fileName : "sketcher/draw/Base.hx", lineNumber : 170, className : "sketcher.draw.Base", methodName : "clone"});
+		haxe_Log.trace("WIP",{ fileName : "sketcher/draw/Base.hx", lineNumber : 220, className : "sketcher.draw.Base", methodName : "clone"});
 		return js_Boot.__cast(JSON.parse(JSON.stringify(this)) , sketcher_draw_Base);
 	}
 	,convertID: function(id) {
@@ -2255,6 +2421,12 @@ sketcher_draw_Base.prototype = {
 		}
 		if(this.get_strokeOpacity() == null) {
 			this.set_strokeOpacity(1);
+		}
+		if(this.get_lineCap() == null) {
+			this.set_lineCap("butt");
+		}
+		if(this.get_lineJoin() == null) {
+			this.set_lineJoin("miter");
 		}
 	}
 	,get_id: function() {
