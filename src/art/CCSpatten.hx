@@ -4,7 +4,7 @@ package art;
 import sketcher.draw.IBase;
 import sketcher.draw.AST.LineCap;
 
-class CCSpatter extends SketcherBase {
+class CCSpatten extends SketcherBase {
 	var grid:GridUtil;
 
 	var _shapeMax = 100;
@@ -48,7 +48,6 @@ class CCSpatter extends SketcherBase {
 		};
 		var gui = new js.dat.gui.GUI(guiSettings);
 		gui.add(this, 'message');
-
 		gui.add(this, 'isArtwork');
 		var refreshController = gui.add(this, 'refresh');
 		refreshController.onFinishChange((e) -> {
@@ -80,16 +79,17 @@ class CCSpatter extends SketcherBase {
 		 */
 		sketch.clear();
 
-		for (i in 0...3) {
+		var bigSpatterRandom = MathUtil.random(0.5, 1.2);
+		_bigSpatterCircle = finalBigSpatterCircle * bigSpatterRandom;
+		var total = 5;
+		var partDegree = 360 / total;
+		for (i in 0...total) {
 			var debugCircleArray:Array<IBase> = [];
 			var debugCircleArray2:Array<IBase> = [];
 			var spatterArray:Array<IBase> = [];
 			var lineArray:Array<IBase> = [];
 			var debugArray:Array<IBase> = [];
 			var groupArray:Array<IBase> = [];
-
-			var bigSpatterRandom = MathUtil.random(0.5, 1.2);
-			_bigSpatterCircle = finalBigSpatterCircle * bigSpatterRandom;
 
 			var smallSpatterRandom = MathUtil.random(0.2, 0.7);
 			_smallSpatterCircle = _bigSpatterCircle * smallSpatterRandom;
@@ -210,7 +210,7 @@ class CCSpatter extends SketcherBase {
 
 			var g = sketch.makeGroup(groupArray);
 			g.id = 'rotate everything';
-			g.setRotate(MathUtil.random(360), p.x, p.y);
+			g.setRotate(MathUtil.random(-partDegree / 2, partDegree / 2) + (i * partDegree), p.x, p.y);
 		}
 		sketch.update();
 	}

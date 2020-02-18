@@ -74,13 +74,14 @@ Lambda.has = function(it,elt) {
 	return false;
 };
 var Main = function() {
-	this.ccTypeArray = [art_CCHanddrawn,art_CCDrips,art_CCSpatter];
+	this.ccTypeArray = [art_CCHanddrawn,art_CCDrips,art_CCSpatter,art_CCSpatten,art_CCCurve];
 	var _gthis = this;
-	haxe_Log.trace("START :: main",{ fileName : "src/Main.hx", lineNumber : 18, className : "Main", methodName : "new"});
+	haxe_Log.trace("START :: main",{ fileName : "src/Main.hx", lineNumber : 21, className : "Main", methodName : "new"});
 	window.document.addEventListener("DOMContentLoaded",function(event) {
-		window.console.log("" + model_constants_App.NAME + " Dom ready :: build: " + "2020-02-14 13:21:01");
+		window.console.log("" + model_constants_App.NAME + " Dom ready :: build: " + "2020-02-18 21:47:08");
 		_gthis.setupArt();
 		_gthis.setupNav();
+		_gthis.setupPull();
 	});
 };
 $hxClasses["Main"] = Main;
@@ -90,8 +91,7 @@ Main.main = function() {
 };
 Main.prototype = {
 	setupArt: function() {
-		this.hash = window.location.hash;
-		this.hash = StringTools.replace(this.hash,"#","");
+		this.getHash();
 		var name = "art." + this.hash;
 		var clazz = $hxClasses[name];
 		if(clazz == null) {
@@ -124,10 +124,48 @@ Main.prototype = {
 			_gthis.changeHash();
 		},false);
 	}
-	,changeHash: function() {
+	,setupPull: function() {
+		var _gthis = this;
+		var div = window.document.createElement("div");
+		div.setAttribute("style","position: fixed;display: block;top: 0;");
+		div.id = "ccsketcher";
+		var select = window.document.createElement("select");
+		select.id = "art";
+		var _g = 0;
+		var _g1 = this.ccTypeArray.length;
+		while(_g < _g1) {
+			var i = _g++;
+			var _ccTypeArray = this.ccTypeArray[i];
+			var name = _ccTypeArray.__name__;
+			var option = window.document.createElement("option");
+			option.value = "" + name;
+			option.text = "" + name;
+			if(name.indexOf(this.getHash()) != -1) {
+				option.selected = true;
+			}
+			select.appendChild(option);
+		}
+		div.appendChild(select);
+		window.document.body.appendChild(div);
+		select.onchange = function(e) {
+			var index = select.selectedIndex;
+			var options = select.options;
+			_gthis.changeHash(index);
+			_gthis.setupArt();
+		};
+	}
+	,changeHash: function(i) {
+		if(i != null) {
+			this.count = i;
+		}
 		var c = this.ccTypeArray[this.count];
 		var tmp = c.__name__;
 		window.location.hash = StringTools.replace(tmp,"art.","");
+	}
+	,getHash: function() {
+		this.hash = window.location.hash;
+		this.hash = StringTools.replace(this.hash,"#","");
+		return this.hash;
 	}
 	,__class__: Main
 };
@@ -265,12 +303,12 @@ var Sketcher = function(settings) {
 	}
 	if(settings.get_scale() == true) {
 		var node = window.document.createElement("style");
-		node.innerHTML = "\n\t\t\t.sketcher-wrapper{width: 100%; height: 100%; padding: 0; margin: 0; display: flex; align-items: center;\tjustify-content: center;}\n\t\t\tsvg {width: 100%; }\n\t\t\tcanvas{width: 100%;}\n\t\t\t";
+		node.innerHTML = "\n\t\t\t.sketcher-wrapper{width: 100%; height: 100%; padding: 0; margin: 0; display: flex; align-items: center;\tjustify-content: center;}\n\t\t\tsvg {width: 100%; height: 100%; background-color:#ffffff; }\n\t\t\tcanvas{width: 100%; background-color:#ffffff; }\n\t\t\t";
 		window.document.body.appendChild(node);
 	}
 	if(settings.get_padding() != null && settings.get_padding() > 0) {
 		var node1 = window.document.createElement("style");
-		node1.innerHTML = "\n\t\t\t.sketcher-wrapper{width: 100%; height: 100%; padding: 0; margin: 0; display: flex; align-items: center;\tjustify-content: center;}\n\t\t\tsvg {margin: " + settings.get_padding() + "px; width: 100%; }\n\t\t\tcanvas {margin: " + settings.get_padding() + "px; width: 100%; }\n\t\t\t";
+		node1.innerHTML = "\n\t\t\t.sketcher-wrapper{width: 100%; height: 100%; padding: 0; margin: 0; display: flex; align-items: center;\tjustify-content: center;}\n\t\t\tsvg {margin: " + settings.get_padding() + "px; width: 100%;  height: 100%; background-color:#ffffff; }\n\t\t\tcanvas {margin: " + settings.get_padding() + "px; width: 100%; background-color:#ffffff; }\n\t\t\t";
 		window.document.body.appendChild(node1);
 	}
 };
@@ -1047,6 +1085,118 @@ Xml.prototype = {
 	}
 	,__class__: Xml
 };
+var art_CCCurve = function() {
+	this.refresh = function() {
+	};
+	this._lineWeight = 1;
+	this.isArtwork = false;
+	this.message = "spatter";
+	this.isDebug = true;
+	var stageW = 1080;
+	var stageH = 1080;
+	var settings = new Settings(stageW,stageH,"svg");
+	settings.set_autostart(true);
+	settings.set_padding(10);
+	settings.set_scale(false);
+	settings.set_elementID("sketcher-wrapper");
+	SketcherBase.call(this,settings);
+	sketcher_util_EmbedUtil.datgui($bind(this,this.initDatGui));
+};
+$hxClasses["art.CCCurve"] = art_CCCurve;
+art_CCCurve.__name__ = "art.CCCurve";
+art_CCCurve.__super__ = SketcherBase;
+art_CCCurve.prototype = $extend(SketcherBase.prototype,{
+	initDatGui: function() {
+		var _gthis = this;
+		var guiSettings = { name : "spatter", closed : false};
+		var gui = new dat.gui.GUI(guiSettings);
+		gui.add(this,"message");
+		gui.add(this,"isArtwork");
+		gui.add(this,"_lineWeight");
+		var refreshController = gui.add(this,"refresh");
+		refreshController.onFinishChange(function(e) {
+			_gthis.drawShape();
+			return;
+		});
+	}
+	,setup: function() {
+		haxe_Log.trace("SETUP :: " + this.toString(),{ fileName : "src/art/CCCurve.hx", lineNumber : 53, className : "art.CCCurve", methodName : "setup"});
+	}
+	,drawShape: function() {
+		this.sketch.clear();
+		var debugCircleArray = [];
+		var lineArray = [];
+		var groupArray = [];
+		var distance = sketcher_util_MathUtil.random(this.get_h2(),Globals.h);
+		var dia0 = sketcher_util_MathUtil.random(Globals.w / 10,Globals.w);
+		var dia1 = sketcher_util_MathUtil.random(Globals.w - this.get_w3(),Globals.w);
+		var pVertical0 = { x : this.get_w2(), y : this.get_h2() - distance / 2};
+		var pVertical1 = { x : this.get_w2(), y : this.get_h2() + distance / 2};
+		var pHorizontalTop0 = { x : this.get_w2() - dia0 / 2, y : pVertical0.y};
+		var pHorizontalTop1 = { x : this.get_w2() + dia0 / 2, y : pVertical0.y};
+		var pHorizontalBottom0 = { x : this.get_w2() - dia1 / 2, y : pVertical1.y};
+		var pHorizontalBottom1 = { x : this.get_w2() + dia1 / 2, y : pVertical1.y};
+		var line = this.sketch.makeLinePoint(pVertical0,pVertical1).noFill().setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.GREEN),1);
+		lineArray.push(line);
+		var line1 = this.sketch.makeLinePoint(pHorizontalTop0,pHorizontalTop1).noFill().setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.PINK));
+		lineArray.push(line1);
+		var line2 = this.sketch.makeLinePoint(pHorizontalBottom0,pHorizontalBottom1).noFill().setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.PINK));
+		lineArray.push(line2);
+		var horArray = [];
+		var horbottomArray = [];
+		var verArray = [];
+		var total = 50;
+		var _g = 0;
+		var _g1 = total + 1;
+		while(_g < _g1) {
+			var i = _g++;
+			var p = { x : pHorizontalTop0.x + i * ((pHorizontalTop1.x - pHorizontalTop0.x) / total), y : pHorizontalTop0.y};
+			var p1 = { x : pHorizontalBottom0.x + i * ((pHorizontalBottom1.x - pHorizontalBottom0.x) / total), y : pHorizontalBottom0.y};
+			horArray.push(p);
+			horbottomArray.push(p1);
+			var circle = this.sketch.makeCircle(p.x,p.y,10).noFill().setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.PINK));
+			debugCircleArray.push(circle);
+			var circle1 = this.sketch.makeCircle(p1.x,p1.y,10).noFill().setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.PINK));
+			debugCircleArray.push(circle1);
+			var p2 = { x : pVertical0.x, y : pVertical0.y + i * (pVertical1.y - pVertical0.y) / total};
+			verArray.push(p2);
+			var circle2 = this.sketch.makeCircle(p2.x,p2.y,10).noFill().setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.LIME));
+			var x = this.sketch.makeX(p2.x,p2.y);
+		}
+		var offset = 10;
+		var _g2 = 0;
+		var _g3 = Math.ceil(horArray.length / 2);
+		while(_g2 < _g3) {
+			var i1 = _g2++;
+			var p_t1 = horArray[i1];
+			var p_t2 = horArray[horArray.length - 1 - i1];
+			var p_v1 = verArray[i1];
+			var p_v2 = verArray[verArray.length - 1 - i1];
+			var line3 = this.sketch.makeLinePoint(p_t1,this.hpoint(p_v1,-offset)).noFill().setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.PURPLE),this._lineWeight).setLineEnds();
+			var line4 = this.sketch.makeLinePoint(p_t2,this.hpoint(p_v1,offset)).noFill().setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.PURPLE),this._lineWeight).setLineEnds();
+			var p_b1 = horbottomArray[i1];
+			var p_b2 = horbottomArray[horbottomArray.length - 1 - i1];
+			var line5 = this.sketch.makeLinePoint(p_b1,this.hpoint(p_v2,-offset)).noFill().setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.PURPLE),this._lineWeight).setLineEnds();
+			var line6 = this.sketch.makeLinePoint(p_b2,this.hpoint(p_v2,offset)).noFill().setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.PURPLE),this._lineWeight).setLineEnds();
+		}
+		var g = this.sketch.makeGroup(debugCircleArray);
+		g.set_id("debug circles one");
+		groupArray.push(g);
+		var g1 = this.sketch.makeGroup(lineArray);
+		g1.set_id("lines");
+		groupArray.push(g1);
+		this.sketch.update();
+	}
+	,hpoint: function(p,offset) {
+		var _p = { x : p.x + offset, y : p.y};
+		return _p;
+	}
+	,draw: function() {
+		this.drawShape();
+		this.stop();
+	}
+	,__class__: art_CCCurve
+});
 var art_CCDrips = function() {
 	this.refresh = function() {
 	};
@@ -1283,6 +1433,178 @@ art_CCHanddrawn.prototype = $extend(SketcherBase.prototype,{
 	}
 	,__class__: art_CCHanddrawn
 });
+var art_CCSpatten = function() {
+	this.refresh = function() {
+	};
+	this.isArtwork = false;
+	this.message = "spatter";
+	this._xoffset = null;
+	this._litelineWeight = 1;
+	this._lineWeight = 10;
+	this._smallSpatterCircle = 50.;
+	this._bigSpatterCircle = 150.;
+	this.finalSmallSpatterCircle = 50.;
+	this.finalBigSpatterCircle = 150.0;
+	this._divide = null;
+	this._shapeMax = 100;
+	this.isDebug = true;
+	var stageW = 1080;
+	var stageH = 1080;
+	var settings = new Settings(stageW,stageH,"svg");
+	settings.set_autostart(true);
+	settings.set_padding(10);
+	settings.set_scale(false);
+	settings.set_elementID("sketcher-wrapper");
+	SketcherBase.call(this,settings);
+	sketcher_util_EmbedUtil.datgui($bind(this,this.initDatGui));
+};
+$hxClasses["art.CCSpatten"] = art_CCSpatten;
+art_CCSpatten.__name__ = "art.CCSpatten";
+art_CCSpatten.__super__ = SketcherBase;
+art_CCSpatten.prototype = $extend(SketcherBase.prototype,{
+	initDatGui: function() {
+		var _gthis = this;
+		var guiSettings = { name : "spatter", closed : true};
+		var gui = new dat.gui.GUI(guiSettings);
+		gui.add(this,"message");
+		gui.add(this,"isArtwork");
+		var refreshController = gui.add(this,"refresh");
+		refreshController.onFinishChange(function(e) {
+			_gthis.drawShape();
+			return;
+		});
+	}
+	,setup: function() {
+		haxe_Log.trace("SETUP :: " + this.toString(),{ fileName : "/Users/matthijs/Documents/GIT/cc-handdrawn/src/art/CCSpatten.hx", lineNumber : 63, className : "art.CCSpatten", methodName : "setup"});
+		this.grid = new sketcher_util_GridUtil(Globals.w,Globals.h);
+		this.grid.setIsCenterPoint(true);
+		this.grid.setNumbered(3,3);
+		this._divide = 360 / this._shapeMax;
+	}
+	,drawShape: function() {
+		this.sketch.clear();
+		var bigSpatterRandom = sketcher_util_MathUtil.random(0.5,1.2);
+		this._bigSpatterCircle = this.finalBigSpatterCircle * bigSpatterRandom;
+		var total = 5;
+		var partDegree = 360 / total;
+		var _g = 0;
+		var _g1 = total;
+		while(_g < _g1) {
+			var i = _g++;
+			var debugCircleArray = [];
+			var debugCircleArray2 = [];
+			var spatterArray = [];
+			var lineArray = [];
+			var debugArray = [];
+			var groupArray = [];
+			var smallSpatterRandom = sketcher_util_MathUtil.random(0.2,0.7);
+			this._smallSpatterCircle = this._bigSpatterCircle * smallSpatterRandom;
+			var maxDistance = this._bigSpatterCircle * 2.3;
+			this._xoffset = this._bigSpatterCircle + (maxDistance - maxDistance * smallSpatterRandom);
+			var p_x = this.get_w2();
+			var p_y = this.get_h2();
+			var circle = this.sketch.makeCircle(p_x,p_y,this._bigSpatterCircle);
+			circle.set_fill(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK));
+			if(this.isArtwork) {
+				circle.setFill(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK)).setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK),this._lineWeight);
+			} else {
+				circle.noFill();
+				circle.set_strokeColor(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK));
+				circle.set_strokeWeight(this._litelineWeight);
+				var x = this.sketch.makeX(p_x,p_y);
+				debugArray.push(x);
+			}
+			spatterArray.push(circle);
+			var p2_x = p_x + this._xoffset;
+			var p2_y = p_y;
+			var circle1 = this.sketch.makeCircle(p2_x,p2_y,this._smallSpatterCircle);
+			if(this.isArtwork) {
+				circle1.setFill(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK)).setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK),this._lineWeight);
+			} else {
+				circle1.noFill();
+				circle1.set_strokeColor(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.RED));
+				circle1.set_strokeWeight(this._litelineWeight);
+				var x1 = this.sketch.makeX(p2_x,p2_y);
+				debugArray.push(x1);
+			}
+			spatterArray.push(circle1);
+			var bigArray = [];
+			var smallArray = [];
+			var _g2 = 0;
+			var _g11 = this._shapeMax;
+			while(_g2 < _g11) {
+				var i1 = _g2++;
+				var angle = i1 * this._divide;
+				var posx = p_x + Math.cos(sketcher_util_MathUtil.radians(angle - 180)) * this._bigSpatterCircle;
+				var posy = p_y + Math.sin(sketcher_util_MathUtil.radians(angle - 180)) * this._bigSpatterCircle;
+				var posx2 = p2_x + Math.cos(sketcher_util_MathUtil.radians(angle)) * this._smallSpatterCircle;
+				var posy2 = p2_y + Math.sin(sketcher_util_MathUtil.radians(angle)) * this._smallSpatterCircle;
+				bigArray.push({ x : posx, y : posy});
+				smallArray.push({ x : posx2, y : posy2});
+				if(!this.isArtwork) {
+					var r = i1 == 0 ? 10 : 4;
+					var c = this.sketch.makeCircle(posx,posy,r);
+					c.noFill();
+					c.setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.PINK),1);
+					debugCircleArray.push(c);
+					var c2 = this.sketch.makeCircle(posx2,posy2,r);
+					c2.noFill();
+					c2.setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.PINK),1);
+					debugCircleArray2.push(c2);
+				}
+			}
+			var s1 = this._shapeMax;
+			var s2 = Math.round(this._shapeMax / 2);
+			var s3 = Math.round(this._shapeMax / 3);
+			var s4 = Math.round(this._shapeMax / 4);
+			var _g21 = 0;
+			var _g3 = s2;
+			while(_g21 < _g3) {
+				var i2 = _g21++;
+				var p1 = bigArray[i2 + s4];
+				var p2 = smallArray[i2 + s4];
+				var p3 = smallArray[i2 + s4 - 10];
+				var p4 = smallArray[i2 + s4 + 10];
+				var _lineColor = sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.GREEN);
+				var _dlineWeight = this._litelineWeight;
+				if(this.isArtwork) {
+					_lineColor = sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK);
+					_dlineWeight = this._lineWeight;
+				}
+				var l = this.sketch.makeLinePoint(p1,p2).setStroke(_lineColor,_dlineWeight).setLineEnds();
+				lineArray.push(l);
+				var l1 = this.sketch.makeLinePoint(p1,p3).setStroke(_lineColor,_dlineWeight).setLineEnds();
+				lineArray.push(l1);
+				var l2 = this.sketch.makeLinePoint(p1,p4).setStroke(_lineColor,_dlineWeight).setLineEnds();
+				lineArray.push(l2);
+			}
+			var g = this.sketch.makeGroup(debugArray);
+			g.set_id("debug");
+			groupArray.push(g);
+			var g1 = this.sketch.makeGroup(debugCircleArray);
+			g1.set_id("debug circles one");
+			groupArray.push(g1);
+			var g2 = this.sketch.makeGroup(debugCircleArray2);
+			g2.set_id("debug circles two");
+			groupArray.push(g2);
+			var g3 = this.sketch.makeGroup(spatterArray);
+			g3.set_id("spatter");
+			groupArray.push(g3);
+			var g4 = this.sketch.makeGroup(lineArray);
+			g4.set_id("lines");
+			groupArray.push(g4);
+			var g5 = this.sketch.makeGroup(groupArray);
+			g5.set_id("rotate everything");
+			g5.setRotate(sketcher_util_MathUtil.random(-partDegree / 2,partDegree / 2) + i * partDegree,p_x,p_y);
+		}
+		this.sketch.update();
+	}
+	,draw: function() {
+		this.drawShape();
+		this.stop();
+	}
+	,__class__: art_CCSpatten
+});
 var art_CCSpatter = function() {
 	this.refresh = function() {
 	};
@@ -1291,14 +1613,21 @@ var art_CCSpatter = function() {
 	this._xoffset = null;
 	this._litelineWeight = 1;
 	this._lineWeight = 10;
-	this._smallSpatterCircle = 66.6666666666666714;
-	this._bigSpatterCircle = 200.;
-	this.finalSmallSpatterCircle = 66.6666666666666714;
-	this.finalBigSpatterCircle = 200.0;
+	this._smallSpatterCircle = 50.;
+	this._bigSpatterCircle = 150.;
+	this.finalSmallSpatterCircle = 50.;
+	this.finalBigSpatterCircle = 150.0;
 	this._divide = null;
 	this._shapeMax = 100;
 	this.isDebug = true;
-	SketcherBase.call(this);
+	var stageW = 1080;
+	var stageH = 1080;
+	var settings = new Settings(stageW,stageH,"svg");
+	settings.set_autostart(true);
+	settings.set_padding(10);
+	settings.set_scale(false);
+	settings.set_elementID("sketcher-wrapper");
+	SketcherBase.call(this,settings);
 	sketcher_util_EmbedUtil.datgui($bind(this,this.initDatGui));
 };
 $hxClasses["art.CCSpatter"] = art_CCSpatter;
@@ -1318,7 +1647,7 @@ art_CCSpatter.prototype = $extend(SketcherBase.prototype,{
 		});
 	}
 	,setup: function() {
-		haxe_Log.trace("SETUP :: " + this.toString(),{ fileName : "/Users/matthijs/Documents/GIT/cc-handdrawn/src/art/CCSpatter.hx", lineNumber : 55, className : "art.CCSpatter", methodName : "setup"});
+		haxe_Log.trace("SETUP :: " + this.toString(),{ fileName : "src/art/CCSpatter.hx", lineNumber : 64, className : "art.CCSpatter", methodName : "setup"});
 		this.grid = new sketcher_util_GridUtil(Globals.w,Globals.h);
 		this.grid.setIsCenterPoint(true);
 		this.grid.setNumbered(3,3);
@@ -1326,76 +1655,116 @@ art_CCSpatter.prototype = $extend(SketcherBase.prototype,{
 	}
 	,drawShape: function() {
 		this.sketch.clear();
-		this._bigSpatterCircle = this.finalBigSpatterCircle * sketcher_util_MathUtil.random(0.5,1.2);
-		this._smallSpatterCircle = this._bigSpatterCircle * sketcher_util_MathUtil.random(0.2,0.6);
-		this._xoffset = this._bigSpatterCircle;
-		var p_x = this.get_w2();
-		var p_y = this.get_h2();
-		var x = this.sketch.makeX(p_x,p_y);
-		var circle = this.sketch.makeCircle(p_x,p_y,this._bigSpatterCircle);
-		circle.set_fill(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK));
-		if(this.isArtwork) {
-			circle.setFill(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK)).setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK),this._lineWeight);
-		} else {
-			circle.noFill();
-			circle.set_strokeColor(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK));
-			circle.set_strokeWeight(this._litelineWeight);
-		}
-		var p2_x = p_x + this._xoffset;
-		var p2_y = p_y;
-		var x1 = this.sketch.makeX(p2_x,p2_y);
-		var circle1 = this.sketch.makeCircle(p2_x,p2_y,this._smallSpatterCircle);
-		if(this.isArtwork) {
-			circle1.setFill(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK)).setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK),this._lineWeight);
-		} else {
-			circle1.noFill();
-			circle1.set_strokeColor(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.RED));
-			circle1.set_strokeWeight(this._litelineWeight);
-		}
-		var bigArray = [];
-		var smallArray = [];
 		var _g = 0;
-		var _g1 = this._shapeMax;
-		while(_g < _g1) {
+		while(_g < 3) {
 			var i = _g++;
-			var angle = i * this._divide;
-			var posx = p_x + Math.cos(sketcher_util_MathUtil.radians(angle - 180)) * this._bigSpatterCircle;
-			var posy = p_y + Math.sin(sketcher_util_MathUtil.radians(angle - 180)) * this._bigSpatterCircle;
-			var posx2 = p2_x + Math.cos(sketcher_util_MathUtil.radians(angle)) * this._smallSpatterCircle;
-			var posy2 = p2_y + Math.sin(sketcher_util_MathUtil.radians(angle)) * this._smallSpatterCircle;
-			bigArray.push({ x : posx, y : posy});
-			smallArray.push({ x : posx2, y : posy2});
-			if(!this.isArtwork) {
-				var r = i == 0 ? 10 : 4;
-				var c = this.sketch.makeCircle(posx,posy,r);
-				c.noFill();
-				c.setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.GREEN),1);
-				var c2 = this.sketch.makeCircle(posx2,posy2,r);
-				c2.noFill();
-				c2.setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.GREEN),1);
-			}
-		}
-		var s1 = this._shapeMax;
-		var s2 = Math.round(this._shapeMax / 2);
-		var s3 = Math.round(this._shapeMax / 3);
-		var s4 = Math.round(this._shapeMax / 4);
-		var _g2 = 0;
-		var _g3 = s2;
-		while(_g2 < _g3) {
-			var i1 = _g2++;
-			var p1 = bigArray[i1 + s4];
-			var p2 = smallArray[i1 + s4];
-			var p3 = smallArray[i1 + s4 - 10];
-			var p4 = smallArray[i1 + s4 + 10];
-			var _lineColor = sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.GREEN);
-			var _dlineWeight = this._litelineWeight;
+			var debugCircleArray = [];
+			var debugCircleArray2 = [];
+			var spatterArray = [];
+			var lineArray = [];
+			var debugArray = [];
+			var groupArray = [];
+			var bigSpatterRandom = sketcher_util_MathUtil.random(0.5,1.2);
+			this._bigSpatterCircle = this.finalBigSpatterCircle * bigSpatterRandom;
+			var smallSpatterRandom = sketcher_util_MathUtil.random(0.2,0.7);
+			this._smallSpatterCircle = this._bigSpatterCircle * smallSpatterRandom;
+			var maxDistance = this._bigSpatterCircle * 2.3;
+			this._xoffset = this._bigSpatterCircle + (maxDistance - maxDistance * smallSpatterRandom);
+			var p_x = this.get_w2();
+			var p_y = this.get_h2();
+			var circle = this.sketch.makeCircle(p_x,p_y,this._bigSpatterCircle);
+			circle.set_fill(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK));
 			if(this.isArtwork) {
-				_lineColor = sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK);
-				_dlineWeight = this._lineWeight;
+				circle.setFill(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK)).setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK),this._lineWeight);
+			} else {
+				circle.noFill();
+				circle.set_strokeColor(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK));
+				circle.set_strokeWeight(this._litelineWeight);
+				var x = this.sketch.makeX(p_x,p_y);
+				debugArray.push(x);
 			}
-			this.sketch.makeLinePoint(p1,p2).setStroke(_lineColor,_dlineWeight).setLineEnds();
-			this.sketch.makeLinePoint(p1,p3).setStroke(_lineColor,_dlineWeight).setLineEnds();
-			this.sketch.makeLinePoint(p1,p4).setStroke(_lineColor,_dlineWeight).setLineEnds();
+			spatterArray.push(circle);
+			var p2_x = p_x + this._xoffset;
+			var p2_y = p_y;
+			var circle1 = this.sketch.makeCircle(p2_x,p2_y,this._smallSpatterCircle);
+			if(this.isArtwork) {
+				circle1.setFill(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK)).setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK),this._lineWeight);
+			} else {
+				circle1.noFill();
+				circle1.set_strokeColor(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.RED));
+				circle1.set_strokeWeight(this._litelineWeight);
+				var x1 = this.sketch.makeX(p2_x,p2_y);
+				debugArray.push(x1);
+			}
+			spatterArray.push(circle1);
+			var bigArray = [];
+			var smallArray = [];
+			var _g1 = 0;
+			var _g11 = this._shapeMax;
+			while(_g1 < _g11) {
+				var i1 = _g1++;
+				var angle = i1 * this._divide;
+				var posx = p_x + Math.cos(sketcher_util_MathUtil.radians(angle - 180)) * this._bigSpatterCircle;
+				var posy = p_y + Math.sin(sketcher_util_MathUtil.radians(angle - 180)) * this._bigSpatterCircle;
+				var posx2 = p2_x + Math.cos(sketcher_util_MathUtil.radians(angle)) * this._smallSpatterCircle;
+				var posy2 = p2_y + Math.sin(sketcher_util_MathUtil.radians(angle)) * this._smallSpatterCircle;
+				bigArray.push({ x : posx, y : posy});
+				smallArray.push({ x : posx2, y : posy2});
+				if(!this.isArtwork) {
+					var r = i1 == 0 ? 10 : 4;
+					var c = this.sketch.makeCircle(posx,posy,r);
+					c.noFill();
+					c.setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.PINK),1);
+					debugCircleArray.push(c);
+					var c2 = this.sketch.makeCircle(posx2,posy2,r);
+					c2.noFill();
+					c2.setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.PINK),1);
+					debugCircleArray2.push(c2);
+				}
+			}
+			var s1 = this._shapeMax;
+			var s2 = Math.round(this._shapeMax / 2);
+			var s3 = Math.round(this._shapeMax / 3);
+			var s4 = Math.round(this._shapeMax / 4);
+			var _g2 = 0;
+			var _g3 = s2;
+			while(_g2 < _g3) {
+				var i2 = _g2++;
+				var p1 = bigArray[i2 + s4];
+				var p2 = smallArray[i2 + s4];
+				var p3 = smallArray[i2 + s4 - 10];
+				var p4 = smallArray[i2 + s4 + 10];
+				var _lineColor = sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.GREEN);
+				var _dlineWeight = this._litelineWeight;
+				if(this.isArtwork) {
+					_lineColor = sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK);
+					_dlineWeight = this._lineWeight;
+				}
+				var l = this.sketch.makeLinePoint(p1,p2).setStroke(_lineColor,_dlineWeight).setLineEnds();
+				lineArray.push(l);
+				var l1 = this.sketch.makeLinePoint(p1,p3).setStroke(_lineColor,_dlineWeight).setLineEnds();
+				lineArray.push(l1);
+				var l2 = this.sketch.makeLinePoint(p1,p4).setStroke(_lineColor,_dlineWeight).setLineEnds();
+				lineArray.push(l2);
+			}
+			var g = this.sketch.makeGroup(debugArray);
+			g.set_id("debug");
+			groupArray.push(g);
+			var g1 = this.sketch.makeGroup(debugCircleArray);
+			g1.set_id("debug circles one");
+			groupArray.push(g1);
+			var g2 = this.sketch.makeGroup(debugCircleArray2);
+			g2.set_id("debug circles two");
+			groupArray.push(g2);
+			var g3 = this.sketch.makeGroup(spatterArray);
+			g3.set_id("spatter");
+			groupArray.push(g3);
+			var g4 = this.sketch.makeGroup(lineArray);
+			g4.set_id("lines");
+			groupArray.push(g4);
+			var g5 = this.sketch.makeGroup(groupArray);
+			g5.set_id("rotate everything");
+			g5.setRotate(sketcher_util_MathUtil.random(360),p_x,p_y);
 		}
 		this.sketch.update();
 	}
@@ -2326,14 +2695,22 @@ sketcher_draw_Base.prototype = {
 	,setPlusPosition: function(x,y) {
 		this.setPosition(x,y);
 	}
-	,setRotate: function(degree,x,y) {
-		this.set_rotate(degree);
-		var str = "rotate(" + degree;
-		if(x != null) {
-			str += "," + x;
+	,setRotate: function(degree,rx,ry) {
+		if(ry == null) {
+			ry = 0;
 		}
-		if(y != null) {
-			str += "," + y;
+		if(rx == null) {
+			rx = 0;
+		}
+		this.set_rotate(degree);
+		this.set_rx(rx);
+		this.set_ry(ry);
+		var str = "rotate(" + degree;
+		if(rx != 0) {
+			str += "," + rx;
+		}
+		if(ry != 0) {
+			str += "," + ry;
 		}
 		str += ")";
 		this.transArr.push(str);
@@ -2399,7 +2776,7 @@ sketcher_draw_Base.prototype = {
 		return this;
 	}
 	,clone: function() {
-		haxe_Log.trace("WIP",{ fileName : "sketcher/draw/Base.hx", lineNumber : 220, className : "sketcher.draw.Base", methodName : "clone"});
+		haxe_Log.trace("WIP",{ fileName : "sketcher/draw/Base.hx", lineNumber : 224, className : "sketcher.draw.Base", methodName : "clone"});
 		return js_Boot.__cast(JSON.parse(JSON.stringify(this)) , sketcher_draw_Base);
 	}
 	,convertID: function(id) {
@@ -2533,6 +2910,18 @@ sketcher_draw_Base.prototype = {
 	,set_rotate: function(value) {
 		return this.rotate = value;
 	}
+	,get_rx: function() {
+		return this.rx;
+	}
+	,set_rx: function(value) {
+		return this.rx = value;
+	}
+	,get_ry: function() {
+		return this.ry;
+	}
+	,set_ry: function(value) {
+		return this.ry = value;
+	}
 	,get_move: function() {
 		return this.move;
 	}
@@ -2613,7 +3002,7 @@ sketcher_draw_Base.prototype = {
 		throw new js__$Boot_HaxeError("Not implemented yet");
 	}
 	,__class__: sketcher_draw_Base
-	,__properties__: {set_lineJoin:"set_lineJoin",get_lineJoin:"get_lineJoin",set_lineCap:"set_lineCap",get_lineCap:"get_lineCap",set_desc:"set_desc",get_desc:"get_desc",set_dash:"set_dash",get_dash:"get_dash",set_transform:"set_transform",get_transform:"get_transform",set_move:"set_move",get_move:"get_move",set_rotate:"set_rotate",get_rotate:"get_rotate",set_isVisible:"set_isVisible",get_isVisible:"get_isVisible",set_fillOpacity:"set_fillOpacity",get_fillOpacity:"get_fillOpacity",set_strokeOpacity:"set_strokeOpacity",get_strokeOpacity:"get_strokeOpacity",set_opacity:"set_opacity",get_opacity:"get_opacity",set_strokeWeight:"set_strokeWeight",get_strokeWeight:"get_strokeWeight",set_lineWeight:"set_lineWeight",get_lineWeight:"get_lineWeight",set_strokeColor:"set_strokeColor",get_strokeColor:"get_strokeColor",set_stroke:"set_stroke",get_stroke:"get_stroke",set_fillGradientColor:"set_fillGradientColor",get_fillGradientColor:"get_fillGradientColor",set_fillColor:"set_fillColor",get_fillColor:"get_fillColor",set_fill:"set_fill",get_fill:"get_fill",set_y:"set_y",get_y:"get_y",set_x:"set_x",get_x:"get_x",set_id:"set_id",get_id:"get_id",get_count:"get_count"}
+	,__properties__: {set_lineJoin:"set_lineJoin",get_lineJoin:"get_lineJoin",set_lineCap:"set_lineCap",get_lineCap:"get_lineCap",set_desc:"set_desc",get_desc:"get_desc",set_dash:"set_dash",get_dash:"get_dash",set_transform:"set_transform",get_transform:"get_transform",set_move:"set_move",get_move:"get_move",set_rotate:"set_rotate",get_rotate:"get_rotate",set_isVisible:"set_isVisible",get_isVisible:"get_isVisible",set_fillOpacity:"set_fillOpacity",get_fillOpacity:"get_fillOpacity",set_strokeOpacity:"set_strokeOpacity",get_strokeOpacity:"get_strokeOpacity",set_opacity:"set_opacity",get_opacity:"get_opacity",set_strokeWeight:"set_strokeWeight",get_strokeWeight:"get_strokeWeight",set_lineWeight:"set_lineWeight",get_lineWeight:"get_lineWeight",set_strokeColor:"set_strokeColor",get_strokeColor:"get_strokeColor",set_stroke:"set_stroke",get_stroke:"get_stroke",set_fillGradientColor:"set_fillGradientColor",get_fillGradientColor:"get_fillGradientColor",set_fillColor:"set_fillColor",get_fillColor:"get_fillColor",set_fill:"set_fill",get_fill:"get_fill",set_ry:"set_ry",get_ry:"get_ry",set_rx:"set_rx",get_rx:"get_rx",set_y:"set_y",get_y:"get_y",set_x:"set_x",get_x:"get_x",set_id:"set_id",get_id:"get_id",get_count:"get_count"}
 };
 var sketcher_draw_IBase = function() { };
 $hxClasses["sketcher.draw.IBase"] = sketcher_draw_IBase;
@@ -2698,10 +3087,10 @@ sketcher_draw_Circle.prototype = $extend(sketcher_draw_Base.prototype,{
 			_a1 = arr2[3];
 		} else if(value1.indexOf("rgb") != -1) {
 			value1 = StringTools.replace(StringTools.replace(value1,"rgb(",""),")","");
-			var arr11 = value1.split(",");
-			_r1 = arr11[0];
-			_g1 = arr11[1];
-			_b1 = arr11[2];
+			var arr3 = value1.split(",");
+			_r1 = arr3[0];
+			_g1 = arr3[1];
+			_b1 = arr3[2];
 		} else if(value1.indexOf("#") != -1) {
 			var int1 = Std.parseInt(StringTools.replace(value1,"#","0x"));
 			var rgb_r1 = int1 >> 16 & 255;
@@ -2756,8 +3145,8 @@ var sketcher_draw_Ellipse = function(x,y,rx,ry) {
 	this.type = "Ellipse";
 	this.set_x(x);
 	this.set_y(y);
-	this.set_rx(rx);
-	this.set_ry(ry);
+	this.set_rrx(rx);
+	this.set_rry(ry);
 	sketcher_draw_Base.call(this,"ellipse");
 };
 $hxClasses["sketcher.draw.Ellipse"] = sketcher_draw_Ellipse;
@@ -2768,8 +3157,8 @@ sketcher_draw_Ellipse.prototype = $extend(sketcher_draw_Base.prototype,{
 	svg: function(settings) {
 		this.xml.set("cx",Std.string(this.get_x()));
 		this.xml.set("cy",Std.string(this.get_y()));
-		this.xml.set("rx",Std.string(this.get_rx()));
-		this.xml.set("ry",Std.string(this.get_ry()));
+		this.xml.set("rx",Std.string(this.get_rrx()));
+		this.xml.set("ry",Std.string(this.get_rry()));
 		if(this.getTransform() != "") {
 			this.xml.set("transform",this.getTransform());
 		}
@@ -2782,20 +3171,20 @@ sketcher_draw_Ellipse.prototype = $extend(sketcher_draw_Base.prototype,{
 	}
 	,gl: function(gl) {
 	}
-	,get_ry: function() {
-		return this.ry;
+	,get_rry: function() {
+		return this.rry;
 	}
-	,set_ry: function(value) {
-		return this.ry = value;
+	,set_rry: function(value) {
+		return this.rry = value;
 	}
-	,get_rx: function() {
-		return this.rx;
+	,get_rrx: function() {
+		return this.rrx;
 	}
-	,set_rx: function(value) {
-		return this.rx = value;
+	,set_rrx: function(value) {
+		return this.rrx = value;
 	}
 	,__class__: sketcher_draw_Ellipse
-	,__properties__: $extend(sketcher_draw_Base.prototype.__properties__,{set_rx:"set_rx",get_rx:"get_rx",set_ry:"set_ry",get_ry:"get_ry"})
+	,__properties__: $extend(sketcher_draw_Base.prototype.__properties__,{set_rrx:"set_rrx",get_rrx:"get_rrx",set_rry:"set_rry",get_rry:"get_rry"})
 });
 var sketcher_draw_Gradient = function(color0,color1,isLinear) {
 	if(isLinear == null) {
@@ -2842,6 +3231,7 @@ sketcher_draw_Gradient.prototype = $extend(sketcher_draw_Base.prototype,{
 	,__class__: sketcher_draw_Gradient
 });
 var sketcher_draw_Group = function(arr) {
+	this.isOpacityOverride = false;
 	this.type = "group";
 	this.set_arr(arr);
 	sketcher_draw_Base.call(this,"g");
@@ -2858,6 +3248,9 @@ sketcher_draw_Group.prototype = $extend(sketcher_draw_Base.prototype,{
 		if(this.getTransform() != "") {
 			this.xml.set("transform",this.getTransform());
 		}
+		if(this.isOpacityOverride) {
+			this.xml.set("opacity-override","true");
+		}
 		var comment = Xml.createComment("Group: " + this.get_id());
 		this.xml.addChild(comment);
 		this.xml.addChild(Xml.parse("<desc>" + this.get_id() + "</desc>"));
@@ -2873,7 +3266,8 @@ sketcher_draw_Group.prototype = $extend(sketcher_draw_Base.prototype,{
 	,ctx: function(ctx) {
 		if(!sketcher_draw_Group.ISWARN) {
 			window.console.groupCollapsed("Group (" + this.get_id() + ") info canvas");
-			window.console.info("the following work\n- strokeOpacity\n- fillOpacity\n- fillColor\n- strokeColor\n- strokeWeight");
+			window.console.info("the following work\n- strokeOpacity\n- fillOpacity\n- fillColor\n- strokeColor\n- strokeWeight\n- rotate");
+			window.console.warn("doesn't work\n- move");
 			window.console.groupEnd();
 			sketcher_draw_Group.ISWARN = true;
 		}
@@ -2885,22 +3279,48 @@ sketcher_draw_Group.prototype = $extend(sketcher_draw_Base.prototype,{
 			if(base == null) {
 				continue;
 			}
-			if(this.get_fillOpacity() != null) {
+			if(this.get_fillOpacity() != null && (js_Boot.__cast(base , sketcher_draw_Base)).get_fillOpacity() == null) {
 				(js_Boot.__cast(base , sketcher_draw_Base)).set_fillOpacity(this.get_fillOpacity());
 			}
-			if(this.get_strokeOpacity() != null) {
+			if(this.get_strokeOpacity() != null && (js_Boot.__cast(base , sketcher_draw_Base)).get_strokeOpacity() == null) {
 				(js_Boot.__cast(base , sketcher_draw_Base)).set_strokeOpacity(this.get_strokeOpacity());
 			}
-			if(this.get_fillColor() != null) {
+			if(this.get_fillColor() != null && (js_Boot.__cast(base , sketcher_draw_Base)).get_fillColor() == null) {
 				(js_Boot.__cast(base , sketcher_draw_Base)).set_fillColor(this.get_fillColor());
 			}
-			if(this.get_strokeColor() != null) {
+			if(this.get_strokeColor() != null && (js_Boot.__cast(base , sketcher_draw_Base)).get_strokeColor() == null) {
 				(js_Boot.__cast(base , sketcher_draw_Base)).set_strokeColor(this.get_strokeColor());
 			}
 			if(this.get_strokeWeight() != null) {
 				(js_Boot.__cast(base , sketcher_draw_Base)).set_strokeWeight(this.get_strokeWeight());
 			}
-			base.ctx(ctx);
+			if(this.isOpacityOverride) {
+				(js_Boot.__cast(base , sketcher_draw_Base)).set_strokeOpacity(this.get_strokeOpacity());
+				(js_Boot.__cast(base , sketcher_draw_Base)).set_fillOpacity(this.get_fillOpacity());
+			}
+		}
+		var newCanvas = window.document.createElement("canvas");
+		newCanvas.width = ctx.canvas.width;
+		newCanvas.height = ctx.canvas.height;
+		var newCtx = newCanvas.getContext("2d",null);
+		var _g2 = 0;
+		var _g3 = this.get_arr().length;
+		while(_g2 < _g3) {
+			var i1 = _g2++;
+			var base1 = this.get_arr()[i1];
+			if(base1 == null) {
+				continue;
+			}
+			base1.ctx(newCtx);
+		}
+		if(this.get_rotate() != null) {
+			ctx.save();
+			ctx.translate(this.get_rx(),this.get_ry());
+			ctx.rotate(sketcher_util_MathUtil.radians(this.get_rotate()));
+			ctx.drawImage(newCanvas,-this.get_rx(),-this.get_ry());
+			ctx.restore();
+		} else {
+			ctx.drawImage(newCanvas,0,0);
 		}
 	}
 	,gl: function(gl) {
@@ -2908,9 +3328,10 @@ sketcher_draw_Group.prototype = $extend(sketcher_draw_Base.prototype,{
 	,hide: function() {
 		this.set_fillOpacity(0);
 		this.set_strokeOpacity(0);
+		this.isOpacityOverride = true;
 	}
 	,test: function() {
-		haxe_Log.trace("test if casting works",{ fileName : "sketcher/draw/Group.hx", lineNumber : 90, className : "sketcher.draw.Group", methodName : "test"});
+		haxe_Log.trace("test if casting works",{ fileName : "sketcher/draw/Group.hx", lineNumber : 142, className : "sketcher.draw.Group", methodName : "test"});
 	}
 	,get_arr: function() {
 		return this.arr;
@@ -3115,10 +3536,10 @@ sketcher_draw_Line.prototype = $extend(sketcher_draw_Base.prototype,{
 			_a1 = arr2[3];
 		} else if(value1.indexOf("rgb") != -1) {
 			value1 = StringTools.replace(StringTools.replace(value1,"rgb(",""),")","");
-			var arr11 = value1.split(",");
-			_r1 = arr11[0];
-			_g1 = arr11[1];
-			_b1 = arr11[2];
+			var arr3 = value1.split(",");
+			_r1 = arr3[0];
+			_g1 = arr3[1];
+			_b1 = arr3[2];
 		} else if(value1.indexOf("#") != -1) {
 			var int1 = Std.parseInt(StringTools.replace(value1,"#","0x"));
 			var rgb_r1 = int1 >> 16 & 255;
@@ -3306,10 +3727,10 @@ sketcher_draw_PolyLine.prototype = $extend(sketcher_draw_Base.prototype,{
 			_a1 = arr2[3];
 		} else if(value1.indexOf("rgb") != -1) {
 			value1 = StringTools.replace(StringTools.replace(value1,"rgb(",""),")","");
-			var arr11 = value1.split(",");
-			_r1 = arr11[0];
-			_g1 = arr11[1];
-			_b1 = arr11[2];
+			var arr3 = value1.split(",");
+			_r1 = arr3[0];
+			_g1 = arr3[1];
+			_b1 = arr3[2];
 		} else if(value1.indexOf("#") != -1) {
 			var int1 = Std.parseInt(StringTools.replace(value1,"#","0x"));
 			var rgb_r1 = int1 >> 16 & 255;
@@ -3521,10 +3942,10 @@ sketcher_draw_Rectangle.prototype = $extend(sketcher_draw_Base.prototype,{
 			_a1 = arr2[3];
 		} else if(value1.indexOf("rgb") != -1) {
 			value1 = StringTools.replace(StringTools.replace(value1,"rgb(",""),")","");
-			var arr11 = value1.split(",");
-			_r1 = arr11[0];
-			_g1 = arr11[1];
-			_b1 = arr11[2];
+			var arr3 = value1.split(",");
+			_r1 = arr3[0];
+			_g1 = arr3[1];
+			_b1 = arr3[2];
 		} else if(value1.indexOf("#") != -1) {
 			var int1 = Std.parseInt(StringTools.replace(value1,"#","0x"));
 			var rgb_r1 = int1 >> 16 & 255;
@@ -5345,7 +5766,10 @@ sketcher_util_EmbedUtil.embedGoogleFont = function(family,callback,callbackArray
 	link.id = _id;
 	link.onload = function() {
 		if(callback != null) {
-			callback.apply(callback,callbackArray);
+			haxe_Timer.delay(function() {
+				callback.apply(callback,callbackArray);
+				return;
+			},1);
 		}
 	};
 	window.document.head.appendChild(link);
