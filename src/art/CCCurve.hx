@@ -51,6 +51,9 @@ class CCCurve extends SketcherBase {
 
 	override function setup() {
 		trace('SETUP :: ${toString()}');
+
+		message = toString();
+		description = toString();
 	}
 
 	function drawShape() {
@@ -155,7 +158,7 @@ class CCCurve extends SketcherBase {
 			var p_b2:Point = horbottomArray[(horbottomArray.length - 1) - i]; // second bottom horizontal line
 
 			var line = sketch.makeLinePoint(p_b1, hpoint(p_v2, -offset)).noFill().setStroke(getColourObj(PURPLE), _lineWeight).setLineEnds();
-			var line = sketch.makeLinePoint(p_b2, hpoint(p_v2, offset)).noFill().setStroke(getColourObj(PURPLE), _lineWeight).setLineEnds();
+			var line = sketch.makeLinePoint(p_b2, hpoint(p_v2, offsetx)).noFill().setStroke(getColourObj(PURPLE), _lineWeight).setLineEnds();
 		}
 
 		var g = sketch.makeGroup(debugCircleArray);

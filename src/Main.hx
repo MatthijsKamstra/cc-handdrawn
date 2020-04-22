@@ -11,6 +11,7 @@ class Main {
 	var ccTypeArray:Array<Class<Dynamic>> = [
 		//
 		art.CCHanddrawn, //
+		art.CCGraffiti, //
 		art.CCDrips, //
 		art.CCSpatter, //
 		art.CCSpatten, //

@@ -237,6 +237,9 @@ class CCHanddrawn extends SketcherBase {
 
 		isDebug = true;
 
+		message = toString();
+		description = toString();
+
 		// to grid
 		grid = new GridUtil(w, h);
 		grid.setCellSize(_cellsize);

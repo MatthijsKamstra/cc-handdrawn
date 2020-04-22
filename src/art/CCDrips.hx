@@ -84,6 +84,9 @@ class CCDrips extends SketcherBase {
 	override function setup() {
 		trace('SETUP :: ${toString()}');
 
+		message = toString();
+		description = toString();
+
 		// to grid
 		grid = new GridUtil(w, h);
 		grid.setIsCenterPoint(true);
