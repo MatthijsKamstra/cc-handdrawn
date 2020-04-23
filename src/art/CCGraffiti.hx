@@ -206,26 +206,6 @@ class CCGraffiti extends SketcherBase {
 	function drawShape() {
 		// reset previous sketch
 
-		// for (i in 0...collectionPointArray.length) {
-		// 	var _pointArray = collectionPointArray[i];
-		// 	var polyline = sketch.makePolyLinePoint(_pointArray);
-		// 	polyline.strokeWeight = strokeWeight;
-		// 	polyline.strokeColor = getColourObj(collectionPointColorArray[i]);
-		// 	polyline.fillOpacity = 0;
-		// 	polyline.lineCap = LineCap.Round;
-		// 	polyline.lineJoin = LineJoin.Round;
-
-		// 	if (useAnchor) {
-		// 		for (i in 0..._pointArray.length) {
-		// 			var p = _pointArray[i];
-		// 			// trace(p);
-		// 			var circle = sketch.makeCircle(p.x, p.y, 10);
-		// 			circle.fillOpacity = 0;
-		// 			circle.strokeColor = getColourObj(BLACK);
-		// 			circle.strokeWeight = 3;
-		// 		}
-		// 	}
-		// }
 		var polyline = sketch.makePolyLinePoint(testArr);
 		polyline.strokeWeight = strokeWeight;
 		polyline.strokeColor = getColourObj(LIME);
