@@ -78,7 +78,7 @@ var Main = function() {
 	var _gthis = this;
 	haxe_Log.trace("START :: main",{ fileName : "src/Main.hx", lineNumber : 22, className : "Main", methodName : "new"});
 	window.document.addEventListener("DOMContentLoaded",function(event) {
-		window.console.log("" + model_constants_App.NAME + " Dom ready :: build: " + "2020-04-22 20:52:43");
+		window.console.log("" + model_constants_App.NAME + " Dom ready :: build: " + "2020-04-28 22:13:34");
 		_gthis.setupArt();
 		_gthis.setupNav();
 		_gthis.setupPull();
@@ -308,7 +308,7 @@ var Sketcher = function(settings) {
 	}
 	if(settings.get_padding() != null && settings.get_padding() >= 0) {
 		var node1 = window.document.createElement("style");
-		node1.innerHTML = "\n\t\t\t<!-- with padding -->\n\t\t\t.sketcher-wrapper{width: 100%; height: 100%; padding: 0; margin: 0; display: flex; align-items: center;\tjustify-content: center;}\n\t\t\tsvg {margin: " + settings.get_padding() + "px; width: 100%;  height: 100%; background-color:#ffffff; }\n\t\t\tcanvas {margin: " + settings.get_padding() + "px; width: 100%; background-color:#ffffff; }\n\t\t\t";
+		node1.innerHTML = "\n\t\t\t<!-- with padding -->\n\t\t\t.sketcher-wrapper{width: 100%; height: 100%; padding: 0; margin: 0; display: flex; align-items: center;\tjustify-content: center;}\n\t\t\tsvg {padding: " + settings.get_padding() + "px; width: 100%;  height: 100%; background-color:#ffffff; }\n\t\t\tcanvas {padding: " + settings.get_padding() + "px; width: 100%; background-color:#ffffff; }\n\t\t\t";
 		window.document.body.appendChild(node1);
 	}
 };
@@ -1334,24 +1334,18 @@ art_CCDrips.prototype = $extend(SketcherBase.prototype,{
 	,__class__: art_CCDrips
 });
 var art_CCGraffiti = function() {
-	this.pointArray = [];
-	this.collectionPointColorArray = [];
-	this.collectionPointArray = [];
 	this.scale = 1.0;
 	this.isMouseDown = false;
-	this.fontFamly = "Oswald:200,300,400,500,600,700";
 	this.startRecording = function() {
 	};
 	this.stopRecording = function() {
 	};
 	this.clear = function() {
 	};
-	this.strokeWeight = 60;
-	this.useAnchor = true;
-	this.useAnimation = true;
-	this.buildversion = "2020-04-22 20:52:43";
+	this.nozzleWeight = 60;
+	this.useMouseMove = false;
+	this.buildversion = "2020-04-28 22:13:34";
 	this.message = "\"hand-drawn\"";
-	this.testArr = [{ x : 100.92373791621911, y : 274.93018259935553},{ x : 100.92373791621911, y : 274.93018259935553},{ x : 100.92373791621911, y : 276.09022556390977},{ x : 100.92373791621911, y : 276.09022556390977},{ x : 240.12889366272825, y : 300.45112781954884},{ x : 240.12889366272825, y : 300.45112781954884},{ x : 325.9720730397422, y : 354.9731471535983},{ x : 325.9720730397422, y : 356.1331901181525},{ x : 325.9720730397422, y : 356.1331901181525},{ x : 379.33404940923737, y : 388.6143931256713},{ x : 379.33404940923737, y : 388.6143931256713},{ x : 378.17400644468313, y : 388.6143931256713},{ x : 378.17400644468313, y : 388.6143931256713},{ x : 378.17400644468313, y : 388.6143931256713},{ x : 378.17400644468313, y : 389.77443609022555},{ x : 415.2953813104189, y : 407.1750805585392},{ x : 415.2953813104189, y : 407.1750805585392},{ x : 414.1353383458646, y : 408.33512352309344},{ x : 414.1353383458646, y : 408.33512352309344},{ x : 414.1353383458646, y : 408.33512352309344},{ x : 447.7765843179377, y : 416.45542427497315},{ x : 447.7765843179377, y : 416.45542427497315},{ x : 447.7765843179377, y : 417.6154672395274},{ x : 447.7765843179377, y : 417.6154672395274},{ x : 475.6176154672395, y : 417.6154672395274},{ x : 476.7776584317938, y : 417.6154672395274},{ x : 476.7776584317938, y : 417.6154672395274},{ x : 512.7389903329753, y : 414.1353383458646},{ x : 512.7389903329753, y : 414.1353383458646},{ x : 512.7389903329753, y : 414.1353383458646},{ x : 628.7432867883996, y : 392.094522019334},{ x : 628.7432867883996, y : 392.094522019334},{ x : 631.0633727175081, y : 392.094522019334},{ x : 633.3834586466165, y : 392.094522019334},{ x : 773.7486573576799, y : 378.17400644468313},{ x : 773.7486573576799, y : 378.17400644468313},{ x : 773.7486573576799, y : 378.17400644468313},{ x : 961.6756176154672, y : 422.25563909774434},{ x : 961.6756176154672, y : 422.25563909774434},{ x : 961.6756176154672, y : 422.25563909774434},{ x : 946.595059076262, y : 687.905477980666},{ x : 946.595059076262, y : 687.905477980666},{ x : 946.595059076262, y : 686.7454350161117},{ x : 946.595059076262, y : 686.7454350161117},{ x : 946.595059076262, y : 686.7454350161117},{ x : 672.8249194414608, y : 736.6272824919441},{ x : 567.2610096670247, y : 716.906552094522},{ x : 567.2610096670247, y : 716.906552094522},{ x : 508.09881847475833, y : 701.8259935553168},{ x : 508.09881847475833, y : 701.8259935553168},{ x : 509.25886143931257, y : 701.8259935553168},{ x : 509.25886143931257, y : 701.8259935553168},{ x : 483.7379162191192, y : 693.7056928034372},{ x : 483.7379162191192, y : 693.7056928034372},{ x : 483.7379162191192, y : 692.5456498388829},{ x : 482.57787325456496, y : 692.5456498388829},{ x : 482.57787325456496, y : 692.5456498388829},{ x : 483.7379162191192, y : 693.7056928034372},{ x : 461.6970998925886, y : 690.2255639097745},{ x : 460.53705692803436, y : 690.2255639097745},{ x : 460.53705692803436, y : 689.0655209452202},{ x : 459.3770139634801, y : 689.0655209452202},{ x : 455.8968850698174, y : 689.0655209452202},{ x : 437.3361976369495, y : 687.905477980666},{ x : 437.3361976369495, y : 687.905477980666},{ x : 433.85606874328676, y : 687.905477980666},{ x : 432.6960257787325, y : 687.905477980666},{ x : 431.5359828141783, y : 687.905477980666},{ x : 401.37486573576797, y : 689.0655209452202},{ x : 401.37486573576797, y : 689.0655209452202},{ x : 396.734693877551, y : 690.2255639097745},{ x : 395.5746509129968, y : 690.2255639097745},{ x : 393.25456498388826, y : 690.2255639097745},{ x : 393.25456498388826, y : 691.3856068743287},{ x : 361.9334049409237, y : 700.6659505907626},{ x : 361.9334049409237, y : 700.6659505907626},{ x : 361.9334049409237, y : 700.6659505907626},{ x : 361.9334049409237, y : 700.6659505907626},{ x : 358.453276047261, y : 701.8259935553168},{ x : 357.29323308270676, y : 702.986036519871},{ x : 334.0923737916219, y : 708.7862513426423},{ x : 334.0923737916219, y : 708.7862513426423},{ x : 334.0923737916219, y : 708.7862513426423},{ x : 328.2921589688507, y : 711.1063372717508},{ x : 325.9720730397422, y : 712.266380236305},{ x : 274.93018259935553, y : 730.827067669173},{ x : 274.93018259935553, y : 730.827067669173},{ x : 177.48657357679915, y : 673.984962406015},{ x : 177.48657357679915, y : 673.984962406015},{ x : 177.48657357679915, y : 673.984962406015},{ x : 171.68635875402794, y : 670.5048335123523},{ x : 141.52524167561762, y : 580.0214822771213},{ x : 141.52524167561762, y : 580.0214822771213},{ x : 139.20515574650912, y : 571.9011815252417},{ x : 132.24489795918367, y : 542.9001074113856}];
 	this._colorCounter = 0;
 	this._activeColor = null;
 	this._colorArr = [];
@@ -1360,12 +1354,8 @@ var art_CCGraffiti = function() {
 	this._color2 = null;
 	this._color1 = null;
 	this._color0 = null;
-	this._cellsize = 150;
-	this._radius = 150;
-	this.shapeArray = [];
 	this.isDebug = true;
 	SketcherBase.call(this);
-	sketcher_util_EmbedUtil.embedGoogleFont(this.fontFamly,$bind(this,this.drawShape));
 	sketcher_util_EmbedUtil.datgui($bind(this,this.initDatGui));
 	this.setupOnMouse();
 	this.setupVideo();
@@ -1381,27 +1371,34 @@ art_CCGraffiti.prototype = $extend(SketcherBase.prototype,{
 	}
 	,setupOnMouse: function() {
 		var el = this.sketch.canvas;
+		this.sketch.canvas.onmousedown = $bind(this,this.onMouseDownHandler);
+		this.sketch.canvas.onmousemove = $bind(this,this.onMouseMoveHandler);
+		this.sketch.canvas.onmouseup = $bind(this,this.onMouseUpHandler);
 		this.scale = this.sketch.canvas.width / window.document.getElementById("sketcher_canvas").clientWidth;
 		this.sketch.canvas.focus();
 	}
 	,onMouseDownHandler: function(e) {
-		haxe_Log.trace("onMouseDownHandler",{ fileName : "src/art/CCGraffiti.hx", lineNumber : 130, className : "art.CCGraffiti", methodName : "onMouseDownHandler"});
-		this.pointArray = [];
-		this.collectionPointArray.push(this.pointArray);
-		this.collectionPointColorArray.push(this._activeColor);
+		haxe_Log.trace("onMouseDownHandler",{ fileName : "src/art/CCGraffiti.hx", lineNumber : 88, className : "art.CCGraffiti", methodName : "onMouseDownHandler"});
 		this.isMouseDown = true;
 	}
 	,onMouseMoveHandler: function(e) {
-		if(this.isMouseDown) {
-			var p = { x : e.offsetX * this.scale, y : e.offsetY * this.scale};
-			window.console.log(p);
-			this.pointArray.push(p);
+		if(this.isMouseDown && this.useMouseMove) {
+			this.convertEvent2Points(e);
 		}
 	}
 	,onMouseUpHandler: function(e) {
-		haxe_Log.trace("onMouseUpHandler",{ fileName : "src/art/CCGraffiti.hx", lineNumber : 151, className : "art.CCGraffiti", methodName : "onMouseUpHandler"});
-		this.isMouseDown = false;
+		haxe_Log.trace("onMouseUpHandler",{ fileName : "src/art/CCGraffiti.hx", lineNumber : 100, className : "art.CCGraffiti", methodName : "onMouseUpHandler"});
+		if(!this.useMouseMove) {
+			this.convertEvent2Points(e);
+		}
 		this.nextColor();
+		this.isMouseDown = false;
+	}
+	,convertEvent2Points: function(e) {
+		this.previousP = this.currentP;
+		var p = { x : e.offsetX * this.scale, y : e.offsetY * this.scale};
+		this.currentP = p;
+		this.setPoint();
 	}
 	,nextColor: function() {
 		this._colorCounter++;
@@ -1417,9 +1414,8 @@ art_CCGraffiti.prototype = $extend(SketcherBase.prototype,{
 		gui.add(this,"message");
 		gui.add(this.sketch.settings,"type");
 		gui.add(this,"buildversion");
-		gui.add(this,"useAnimation");
-		gui.add(this,"useAnchor");
-		gui.add(this,"strokeWeight");
+		gui.add(this,"useMouseMove");
+		gui.add(this,"nozzleWeight");
 		var clearControler = gui.add(this,"clear");
 		clearControler.onFinishChange(function(value) {
 			_gthis.clearAll();
@@ -1434,33 +1430,78 @@ art_CCGraffiti.prototype = $extend(SketcherBase.prototype,{
 		});
 	}
 	,clearAll: function() {
-		this.collectionPointArray = [];
-		this.collectionPointColorArray = [];
-		this.pointArray = [];
 		this.sketch.clear();
+		this.previousP = null;
+		this.currentP = null;
 		this.setup();
 	}
-	,drawShape: function() {
-		var polyline = this.sketch.makePolyLinePoint(this.testArr);
-		polyline.set_strokeWeight(this.strokeWeight);
-		polyline.set_strokeColor(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.LIME));
-		polyline.set_fillOpacity(0);
-		polyline.set_lineCap("round");
-		polyline.set_lineJoin("round");
-		var _g = 0;
-		var _g1 = this.testArr.length;
-		while(_g < _g1) {
-			var i = _g++;
-			var p = this.testArr[i];
-			var circle = this.sketch.makeCircle(p.x,p.y,10);
-			circle.set_fillOpacity(0);
-			circle.set_strokeColor(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK));
-			circle.set_strokeWeight(3);
+	,dripAnimation: function(lineObj) {
+		window.console.log("dripAnimation: " + Std.string(lineObj));
+		var Go = new sketcher_lets_Go(lineObj,lineObj.time);
+		Go._isFrom = false;
+		var _this = Go;
+		var value = lineObj.y2 + lineObj.drip;
+		var objValue = 0;
+		if(Object.prototype.hasOwnProperty.call(_this._target,"y2")) {
+			objValue = Reflect.getProperty(_this._target,"y2");
+		}
+		var _range = { key : "y2", from : _this._isFrom ? value : objValue, to : !_this._isFrom ? value : objValue};
+		var _this1 = _this._props;
+		if(__map_reserved["y2"] != null) {
+			_this1.setReserved("y2",_range);
+		} else {
+			_this1.h["y2"] = _range;
+		}
+		if(_this._isFrom) {
+			_this.updateProperties(0);
+		}
+		var _this2 = _this;
+		_this2._options.onUpdate = $bind(this,this.onUpdateHandler);
+		_this2._options.onUpdateParams = [lineObj];
+		var _this3 = _this2;
+		_this3._easing = sketcher_lets_easing_Quad.get_easeOut();
+	}
+	,onUpdateHandler: function(lineObj) {
+		var p1 = { x : lineObj.x1, y : lineObj.y1};
+		var p2 = { x : lineObj.x2, y : lineObj.y2};
+		var line = this.sketch.makeLinePoint(p1,p2);
+		line.setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.PINK),lineObj.r);
+		line.setLineEnds();
+		this.sketch.update();
+	}
+	,setPoint: function() {
+		var p = this.currentP;
+		var circle = this.sketch.makeCircle(p.x,p.y,4);
+		circle.setFill(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK),0.5);
+		var circle1 = this.sketch.makeCircle(p.x,p.y,this.nozzleWeight);
+		circle1.set_fillOpacity(0);
+		circle1.setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK),0.5);
+		if(this.previousP != null) {
+			var line = this.sketch.makeLinePoint(this.currentP,this.previousP);
+			line.setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.RED),this.nozzleWeight * 2,0.1);
+			line.setLineEnds();
+			var line1 = this.sketch.makeLinePoint(this.currentP,this.previousP);
+			line1.setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.RED),1);
+			var distance = sketcher_util_MathUtil.distancePoint(this.currentP,this.previousP);
+			if(distance <= this.nozzleWeight) {
+				var circle2 = this.sketch.makeCircle(p.x,p.y,distance);
+				circle2.set_fillOpacity(0);
+				circle2.setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.LIME),1);
+				var pct = distance / this.nozzleWeight;
+				var pct2 = 1 - distance / this.nozzleWeight;
+				var drip = this.sketch.makeCircle(p.x,p.y,this.nozzleWeight * pct2);
+				drip.setFill(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.LIME),0.5);
+				var _line = { x1 : p.x, y1 : p.y, x2 : p.x, y2 : p.y, r : 50 * pct2, drip : this.nozzleWeight * 1.5 + 100 * pct2, time : 2 * pct};
+				this.dripAnimation(_line);
+			}
 		}
 		this.sketch.update();
 	}
+	,drawShape: function() {
+		this.sketch.update();
+	}
 	,setup: function() {
-		haxe_Log.trace("SETUP :: " + this.toString(),{ fileName : "src/art/CCGraffiti.hx", lineNumber : 251, className : "art.CCGraffiti", methodName : "setup"});
+		haxe_Log.trace("SETUP :: " + this.toString(),{ fileName : "src/art/CCGraffiti.hx", lineNumber : 257, className : "art.CCGraffiti", methodName : "setup"});
 		var colorArray = sketcher_util_ColorUtil.niceColor100SortedString[sketcher_util_MathUtil.randomInt(sketcher_util_ColorUtil.niceColor100SortedString.length - 1)];
 		var int = Std.parseInt(StringTools.replace(colorArray[0],"#","0x"));
 		this._color0 = { r : int >> 16 & 255, g : int >> 8 & 255, b : int & 255};
@@ -1477,18 +1518,13 @@ art_CCGraffiti.prototype = $extend(SketcherBase.prototype,{
 		this.isDebug = true;
 		this.message = this.toString();
 		this.description = this.toString();
-		this.grid = new sketcher_util_GridUtil(Globals.w,Globals.h);
-		this.grid.setCellSize(this._cellsize);
-		this.grid.setIsCenterPoint(true);
 		this.sketch.clear();
 		var bg = this.sketch.makeRectangle(0,0,Globals.w,Globals.h,false);
 		bg.set_id("bg color");
 		bg.set_fill(sketcher_util_ColorUtil.getColourObj(this._color0));
+		this.sketch.update();
 	}
 	,draw: function() {
-		if(this.useAnimation) {
-			this.drawShape();
-		}
 	}
 	,__class__: art_CCGraffiti
 });
@@ -3482,10 +3518,10 @@ sketcher_draw_Button.prototype = $extend(sketcher_draw_Base.prototype,{
 			_a1 = arr2[3];
 		} else if(value1.indexOf("rgb") != -1) {
 			value1 = StringTools.replace(StringTools.replace(value1,"rgb(",""),")","");
-			var arr3 = value1.split(",");
-			_r1 = arr3[0];
-			_g1 = arr3[1];
-			_b1 = arr3[2];
+			var arr11 = value1.split(",");
+			_r1 = arr11[0];
+			_g1 = arr11[1];
+			_b1 = arr11[2];
 		} else if(value1.indexOf("#") != -1) {
 			var int1 = Std.parseInt(StringTools.replace(value1,"#","0x"));
 			var rgb_r1 = int1 >> 16 & 255;
@@ -3674,10 +3710,10 @@ sketcher_draw_Circle.prototype = $extend(sketcher_draw_Base.prototype,{
 			_a1 = arr2[3];
 		} else if(value1.indexOf("rgb") != -1) {
 			value1 = StringTools.replace(StringTools.replace(value1,"rgb(",""),")","");
-			var arr3 = value1.split(",");
-			_r1 = arr3[0];
-			_g1 = arr3[1];
-			_b1 = arr3[2];
+			var arr11 = value1.split(",");
+			_r1 = arr11[0];
+			_g1 = arr11[1];
+			_b1 = arr11[2];
 		} else if(value1.indexOf("#") != -1) {
 			var int1 = Std.parseInt(StringTools.replace(value1,"#","0x"));
 			var rgb_r1 = int1 >> 16 & 255;
@@ -4122,10 +4158,10 @@ sketcher_draw_Line.prototype = $extend(sketcher_draw_Base.prototype,{
 			_a1 = arr2[3];
 		} else if(value1.indexOf("rgb") != -1) {
 			value1 = StringTools.replace(StringTools.replace(value1,"rgb(",""),")","");
-			var arr3 = value1.split(",");
-			_r1 = arr3[0];
-			_g1 = arr3[1];
-			_b1 = arr3[2];
+			var arr11 = value1.split(",");
+			_r1 = arr11[0];
+			_g1 = arr11[1];
+			_b1 = arr11[2];
 		} else if(value1.indexOf("#") != -1) {
 			var int1 = Std.parseInt(StringTools.replace(value1,"#","0x"));
 			var rgb_r1 = int1 >> 16 & 255;
@@ -4420,10 +4456,10 @@ sketcher_draw_PolyLine.prototype = $extend(sketcher_draw_Base.prototype,{
 			_a1 = arr2[3];
 		} else if(value1.indexOf("rgb") != -1) {
 			value1 = StringTools.replace(StringTools.replace(value1,"rgb(",""),")","");
-			var arr3 = value1.split(",");
-			_r1 = arr3[0];
-			_g1 = arr3[1];
-			_b1 = arr3[2];
+			var arr11 = value1.split(",");
+			_r1 = arr11[0];
+			_g1 = arr11[1];
+			_b1 = arr11[2];
 		} else if(value1.indexOf("#") != -1) {
 			var int1 = Std.parseInt(StringTools.replace(value1,"#","0x"));
 			var rgb_r1 = int1 >> 16 & 255;
@@ -4565,10 +4601,10 @@ sketcher_draw_Polygon.prototype = $extend(sketcher_draw_Base.prototype,{
 			_a1 = arr2[3];
 		} else if(value1.indexOf("rgb") != -1) {
 			value1 = StringTools.replace(StringTools.replace(value1,"rgb(",""),")","");
-			var arr3 = value1.split(",");
-			_r1 = arr3[0];
-			_g1 = arr3[1];
-			_b1 = arr3[2];
+			var arr11 = value1.split(",");
+			_r1 = arr11[0];
+			_g1 = arr11[1];
+			_b1 = arr11[2];
 		} else if(value1.indexOf("#") != -1) {
 			var int1 = Std.parseInt(StringTools.replace(value1,"#","0x"));
 			var rgb_r1 = int1 >> 16 & 255;
@@ -4773,10 +4809,10 @@ sketcher_draw_Rectangle.prototype = $extend(sketcher_draw_Base.prototype,{
 			_a1 = arr2[3];
 		} else if(value1.indexOf("rgb") != -1) {
 			value1 = StringTools.replace(StringTools.replace(value1,"rgb(",""),")","");
-			var arr3 = value1.split(",");
-			_r1 = arr3[0];
-			_g1 = arr3[1];
-			_b1 = arr3[2];
+			var arr11 = value1.split(",");
+			_r1 = arr11[0];
+			_g1 = arr11[1];
+			_b1 = arr11[2];
 		} else if(value1.indexOf("#") != -1) {
 			var int1 = Std.parseInt(StringTools.replace(value1,"#","0x"));
 			var rgb_r1 = int1 >> 16 & 255;
@@ -5845,7 +5881,7 @@ sketcher_lets_Go.prototype = {
 		if(isTimeBased == null) {
 			isTimeBased = true;
 		}
-		haxe_Log.trace("Fixme: this doesn\t work right now",{ fileName : "sketcher/lets/Go.hx", lineNumber : 217, className : "sketcher.lets.Go", methodName : "isTimeBased"});
+		haxe_Log.trace("Fixme: this doesn\t work right now",{ fileName : "sketcher/lets/Go.hx", lineNumber : 224, className : "sketcher.lets.Go", methodName : "isTimeBased"});
 		this._isTimeBased = isTimeBased;
 		this._duration = this._duration / this.FRAME_RATE | 0;
 		return this;
@@ -6149,9 +6185,12 @@ sketcher_lets_Go.prototype = {
 	}
 	,init: function() {
 		if(this._isTimeBased) {
-			haxe_Log.trace("TODO: build timebased animation",{ fileName : "sketcher/lets/Go.hx", lineNumber : 487, className : "sketcher.lets.Go", methodName : "init"});
+			haxe_Log.trace("TODO: build timebased animation",{ fileName : "sketcher/lets/Go.hx", lineNumber : 495, className : "sketcher.lets.Go", methodName : "init"});
 		} else if(sketcher_lets_Go._requestId == null) {
+			window.console.info("start frame animation");
 			sketcher_lets_Go._requestId = window.requestAnimationFrame($bind(this,this.onEnterFrameHandler));
+		} else {
+			this.onEnterFrameHandler();
 		}
 	}
 	,onEnterFrameHandler: function(time) {
@@ -6174,7 +6213,7 @@ sketcher_lets_Go.prototype = {
 	}
 	,update: function() {
 		if(this._delay > 0 && this._isTimeBased) {
-			haxe_Log.trace("FIXME this doesn't work yet",{ fileName : "sketcher/lets/Go.hx", lineNumber : 526, className : "sketcher.lets.Go", methodName : "update"});
+			haxe_Log.trace("FIXME this doesn't work yet",{ fileName : "sketcher/lets/Go.hx", lineNumber : 537, className : "sketcher.lets.Go", methodName : "update"});
 		}
 		if(this._delay > 0) {
 			this._delay--;
@@ -6182,7 +6221,7 @@ sketcher_lets_Go.prototype = {
 		}
 		if(!this._isDelayDone) {
 			if(this.DEBUG) {
-				haxe_Log.trace("should trigger only once: " + this._id,{ fileName : "sketcher/lets/Go.hx", lineNumber : 533, className : "sketcher.lets.Go", methodName : "update"});
+				haxe_Log.trace("should trigger only once: " + this._id,{ fileName : "sketcher/lets/Go.hx", lineNumber : 544, className : "sketcher.lets.Go", methodName : "update"});
 			}
 			if(Reflect.isFunction(this._options.onAnimationStart)) {
 				var func = this._options.onAnimationStart;
@@ -6207,7 +6246,7 @@ sketcher_lets_Go.prototype = {
 		if(Reflect.isFunction(this._options.onUpdate)) {
 			var func = this._options.onUpdate;
 			var arr = this._options.onUpdateParams != null ? this._options.onUpdateParams : [];
-			func.apply(func,[arr]);
+			func.apply(func,arr);
 		}
 		if(this._props == null) {
 			return;
@@ -6228,9 +6267,9 @@ sketcher_lets_Go.prototype = {
 				var __speed = __map_reserved["speed"] != null ? _this4.getReserved("speed") : _this4.h["speed"];
 				var _this5 = this._props;
 				var __rad = __map_reserved["radius"] != null ? _this5.getReserved("radius") : _this5.h["radius"];
-				haxe_Log.trace("cx: " + __cx.to + ",  cy: " + __cy.to + " , " + __angle.to + ", " + __speed.to + ", " + __rad.to,{ fileName : "sketcher/lets/Go.hx", lineNumber : 591, className : "sketcher.lets.Go", methodName : "updateProperties"});
-				haxe_Log.trace("" + n1 + " == \"angle\" : " + Std.string(n1 == "angle"),{ fileName : "sketcher/lets/Go.hx", lineNumber : 602, className : "sketcher.lets.Go", methodName : "updateProperties"});
-				haxe_Log.trace(this._target,{ fileName : "sketcher/lets/Go.hx", lineNumber : 604, className : "sketcher.lets.Go", methodName : "updateProperties"});
+				haxe_Log.trace("cx: " + __cx.to + ",  cy: " + __cy.to + " , " + __angle.to + ", " + __speed.to + ", " + __rad.to,{ fileName : "sketcher/lets/Go.hx", lineNumber : 602, className : "sketcher.lets.Go", methodName : "updateProperties"});
+				haxe_Log.trace("" + n1 + " == \"angle\" : " + Std.string(n1 == "angle"),{ fileName : "sketcher/lets/Go.hx", lineNumber : 613, className : "sketcher.lets.Go", methodName : "updateProperties"});
+				haxe_Log.trace(this._target,{ fileName : "sketcher/lets/Go.hx", lineNumber : 615, className : "sketcher.lets.Go", methodName : "updateProperties"});
 				if(n1 == "angle") {
 					var aa = __angle.to + __speed.to;
 					Reflect.setProperty(this._target,n1,aa);
@@ -6242,7 +6281,7 @@ sketcher_lets_Go.prototype = {
 	}
 	,complete: function() {
 		if(this.DEBUG) {
-			haxe_Log.trace("complete :: \"" + this._id + "\", _duration: " + this._duration + ", _seconds: " + this._seconds + ", _initTime: " + this._initTime + " / _tweens.length: " + sketcher_lets_Go._tweens.length,{ fileName : "sketcher/lets/Go.hx", lineNumber : 627, className : "sketcher.lets.Go", methodName : "complete"});
+			haxe_Log.trace("complete :: \"" + this._id + "\", _duration: " + this._duration + ", _seconds: " + this._seconds + ", _initTime: " + this._initTime + " / _tweens.length: " + sketcher_lets_Go._tweens.length,{ fileName : "sketcher/lets/Go.hx", lineNumber : 638, className : "sketcher.lets.Go", methodName : "complete"});
 		}
 		if(this._isYoyo) {
 			var n = this._props.keys();
@@ -6302,7 +6341,14 @@ sketcher_lets_Go.prototype = {
 			this._delay = 0;
 		}
 	}
+	,get_id: function() {
+		return this._id;
+	}
+	,set_id: function(value) {
+		return this._id = value;
+	}
 	,__class__: sketcher_lets_Go
+	,__properties__: {set_id:"set_id",get_id:"get_id"}
 };
 var sketcher_lets_easing_IEasing = function() { };
 $hxClasses["sketcher.lets.easing.IEasing"] = sketcher_lets_easing_IEasing;
@@ -7099,6 +7145,9 @@ sketcher_util_MathUtil.distributeAngles = function(me,total) {
 sketcher_util_MathUtil.distance = function(x1,y1,x2,y2) {
 	return sketcher_util_MathUtil.dist(x1,y1,x2,y2);
 };
+sketcher_util_MathUtil.distancePoint = function(p0,p1) {
+	return sketcher_util_MathUtil.dist(p0.x,p0.y,p1.x,p1.y);
+};
 sketcher_util_MathUtil.dist = function(x1,y1,x2,y2) {
 	x2 -= x1;
 	y2 -= y1;
@@ -7106,7 +7155,7 @@ sketcher_util_MathUtil.dist = function(x1,y1,x2,y2) {
 };
 sketcher_util_MathUtil.pythagoreanTheorem = function(a,b,c) {
 	if(a == null && b == null && c == null) {
-		haxe_Log.trace("Really? Perhaps you should use some data",{ fileName : "sketcher/util/MathUtil.hx", lineNumber : 106, className : "sketcher.util.MathUtil", methodName : "pythagoreanTheorem"});
+		haxe_Log.trace("Really? Perhaps you should use some data",{ fileName : "sketcher/util/MathUtil.hx", lineNumber : 110, className : "sketcher.util.MathUtil", methodName : "pythagoreanTheorem"});
 		return 0;
 	}
 	var value = 0.0;
