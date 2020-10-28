@@ -98,8 +98,12 @@ class CCGraffiti extends SketcherBase {
 
 	function onMouseUpHandler(e:MouseEvent) {
 		trace('onMouseUpHandler');
-		if (!useMouseMove)
+		if (!useMouseMove) {
 			convertEvent2Points(e);
+		} else {
+			previousP = null;
+			currentP = null;
+		}
 		nextColor();
 		isMouseDown = false;
 	}
@@ -140,6 +144,16 @@ class CCGraffiti extends SketcherBase {
 		// gui.add(this, 'useAnchor');
 		gui.add(this, 'useMouseMove');
 		gui.add(this, 'nozzleWeight');
+
+		var folder = gui.addFolder("colors");
+
+		folder.addColor(this, '_activeColor').listen();
+		folder.addColor(this, '_color0').listen();
+		folder.addColor(this, '_color1').listen();
+		folder.addColor(this, '_color2').listen();
+		folder.addColor(this, '_color3').listen();
+		folder.addColor(this, '_color4').listen();
+
 		// gui.add(this, 'explode');
 		var clearControler = gui.add(this, 'clear');
 		clearControler.onFinishChange(function(value) {
@@ -208,9 +222,11 @@ class CCGraffiti extends SketcherBase {
 		circle.setStroke(getColourObj(BLACK), 0.5);
 
 		if (previousP != null) {
+			// stroke line (rounded) from point to point
 			var line = sketch.makeLinePoint(currentP, previousP);
-			line.setStroke(getColourObj(RED), nozzleWeight * 2, 0.1);
+			line.setStroke(getColourObj(_activeColor), nozzleWeight * 2, 0.1);
 			line.setLineEnds();
+			// center line from point to point
 			var line = sketch.makeLinePoint(currentP, previousP);
 			line.setStroke(getColourObj(RED), 1);
 

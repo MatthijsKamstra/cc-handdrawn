@@ -78,7 +78,7 @@ var Main = function() {
 	var _gthis = this;
 	haxe_Log.trace("START :: main",{ fileName : "src/Main.hx", lineNumber : 22, className : "Main", methodName : "new"});
 	window.document.addEventListener("DOMContentLoaded",function(event) {
-		window.console.log("" + model_constants_App.NAME + " Dom ready :: build: " + "2020-04-28 22:13:34");
+		window.console.log("" + model_constants_App.NAME + " Dom ready :: build: " + "2020-04-29 20:58:36");
 		_gthis.setupArt();
 		_gthis.setupNav();
 		_gthis.setupPull();
@@ -1344,7 +1344,7 @@ var art_CCGraffiti = function() {
 	};
 	this.nozzleWeight = 60;
 	this.useMouseMove = false;
-	this.buildversion = "2020-04-28 22:13:34";
+	this.buildversion = "2020-04-29 20:58:36";
 	this.message = "\"hand-drawn\"";
 	this._colorCounter = 0;
 	this._activeColor = null;
@@ -1390,6 +1390,9 @@ art_CCGraffiti.prototype = $extend(SketcherBase.prototype,{
 		haxe_Log.trace("onMouseUpHandler",{ fileName : "src/art/CCGraffiti.hx", lineNumber : 100, className : "art.CCGraffiti", methodName : "onMouseUpHandler"});
 		if(!this.useMouseMove) {
 			this.convertEvent2Points(e);
+		} else {
+			this.previousP = null;
+			this.currentP = null;
 		}
 		this.nextColor();
 		this.isMouseDown = false;
@@ -1416,6 +1419,13 @@ art_CCGraffiti.prototype = $extend(SketcherBase.prototype,{
 		gui.add(this,"buildversion");
 		gui.add(this,"useMouseMove");
 		gui.add(this,"nozzleWeight");
+		var folder = gui.addFolder("colors");
+		folder.addColor(this,"_activeColor").listen();
+		folder.addColor(this,"_color0").listen();
+		folder.addColor(this,"_color1").listen();
+		folder.addColor(this,"_color2").listen();
+		folder.addColor(this,"_color3").listen();
+		folder.addColor(this,"_color4").listen();
 		var clearControler = gui.add(this,"clear");
 		clearControler.onFinishChange(function(value) {
 			_gthis.clearAll();
@@ -1478,7 +1488,7 @@ art_CCGraffiti.prototype = $extend(SketcherBase.prototype,{
 		circle1.setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.BLACK),0.5);
 		if(this.previousP != null) {
 			var line = this.sketch.makeLinePoint(this.currentP,this.previousP);
-			line.setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.RED),this.nozzleWeight * 2,0.1);
+			line.setStroke(sketcher_util_ColorUtil.getColourObj(this._activeColor),this.nozzleWeight * 2,0.1);
 			line.setLineEnds();
 			var line1 = this.sketch.makeLinePoint(this.currentP,this.previousP);
 			line1.setStroke(sketcher_util_ColorUtil.getColourObj(sketcher_util_ColorUtil.RED),1);
@@ -1501,7 +1511,7 @@ art_CCGraffiti.prototype = $extend(SketcherBase.prototype,{
 		this.sketch.update();
 	}
 	,setup: function() {
-		haxe_Log.trace("SETUP :: " + this.toString(),{ fileName : "src/art/CCGraffiti.hx", lineNumber : 257, className : "art.CCGraffiti", methodName : "setup"});
+		haxe_Log.trace("SETUP :: " + this.toString(),{ fileName : "src/art/CCGraffiti.hx", lineNumber : 273, className : "art.CCGraffiti", methodName : "setup"});
 		var colorArray = sketcher_util_ColorUtil.niceColor100SortedString[sketcher_util_MathUtil.randomInt(sketcher_util_ColorUtil.niceColor100SortedString.length - 1)];
 		var int = Std.parseInt(StringTools.replace(colorArray[0],"#","0x"));
 		this._color0 = { r : int >> 16 & 255, g : int >> 8 & 255, b : int & 255};
@@ -3518,10 +3528,10 @@ sketcher_draw_Button.prototype = $extend(sketcher_draw_Base.prototype,{
 			_a1 = arr2[3];
 		} else if(value1.indexOf("rgb") != -1) {
 			value1 = StringTools.replace(StringTools.replace(value1,"rgb(",""),")","");
-			var arr11 = value1.split(",");
-			_r1 = arr11[0];
-			_g1 = arr11[1];
-			_b1 = arr11[2];
+			var arr3 = value1.split(",");
+			_r1 = arr3[0];
+			_g1 = arr3[1];
+			_b1 = arr3[2];
 		} else if(value1.indexOf("#") != -1) {
 			var int1 = Std.parseInt(StringTools.replace(value1,"#","0x"));
 			var rgb_r1 = int1 >> 16 & 255;
@@ -3710,10 +3720,10 @@ sketcher_draw_Circle.prototype = $extend(sketcher_draw_Base.prototype,{
 			_a1 = arr2[3];
 		} else if(value1.indexOf("rgb") != -1) {
 			value1 = StringTools.replace(StringTools.replace(value1,"rgb(",""),")","");
-			var arr11 = value1.split(",");
-			_r1 = arr11[0];
-			_g1 = arr11[1];
-			_b1 = arr11[2];
+			var arr3 = value1.split(",");
+			_r1 = arr3[0];
+			_g1 = arr3[1];
+			_b1 = arr3[2];
 		} else if(value1.indexOf("#") != -1) {
 			var int1 = Std.parseInt(StringTools.replace(value1,"#","0x"));
 			var rgb_r1 = int1 >> 16 & 255;
@@ -4158,10 +4168,10 @@ sketcher_draw_Line.prototype = $extend(sketcher_draw_Base.prototype,{
 			_a1 = arr2[3];
 		} else if(value1.indexOf("rgb") != -1) {
 			value1 = StringTools.replace(StringTools.replace(value1,"rgb(",""),")","");
-			var arr11 = value1.split(",");
-			_r1 = arr11[0];
-			_g1 = arr11[1];
-			_b1 = arr11[2];
+			var arr3 = value1.split(",");
+			_r1 = arr3[0];
+			_g1 = arr3[1];
+			_b1 = arr3[2];
 		} else if(value1.indexOf("#") != -1) {
 			var int1 = Std.parseInt(StringTools.replace(value1,"#","0x"));
 			var rgb_r1 = int1 >> 16 & 255;
@@ -4456,10 +4466,10 @@ sketcher_draw_PolyLine.prototype = $extend(sketcher_draw_Base.prototype,{
 			_a1 = arr2[3];
 		} else if(value1.indexOf("rgb") != -1) {
 			value1 = StringTools.replace(StringTools.replace(value1,"rgb(",""),")","");
-			var arr11 = value1.split(",");
-			_r1 = arr11[0];
-			_g1 = arr11[1];
-			_b1 = arr11[2];
+			var arr3 = value1.split(",");
+			_r1 = arr3[0];
+			_g1 = arr3[1];
+			_b1 = arr3[2];
 		} else if(value1.indexOf("#") != -1) {
 			var int1 = Std.parseInt(StringTools.replace(value1,"#","0x"));
 			var rgb_r1 = int1 >> 16 & 255;
@@ -4601,10 +4611,10 @@ sketcher_draw_Polygon.prototype = $extend(sketcher_draw_Base.prototype,{
 			_a1 = arr2[3];
 		} else if(value1.indexOf("rgb") != -1) {
 			value1 = StringTools.replace(StringTools.replace(value1,"rgb(",""),")","");
-			var arr11 = value1.split(",");
-			_r1 = arr11[0];
-			_g1 = arr11[1];
-			_b1 = arr11[2];
+			var arr3 = value1.split(",");
+			_r1 = arr3[0];
+			_g1 = arr3[1];
+			_b1 = arr3[2];
 		} else if(value1.indexOf("#") != -1) {
 			var int1 = Std.parseInt(StringTools.replace(value1,"#","0x"));
 			var rgb_r1 = int1 >> 16 & 255;
@@ -4809,10 +4819,10 @@ sketcher_draw_Rectangle.prototype = $extend(sketcher_draw_Base.prototype,{
 			_a1 = arr2[3];
 		} else if(value1.indexOf("rgb") != -1) {
 			value1 = StringTools.replace(StringTools.replace(value1,"rgb(",""),")","");
-			var arr11 = value1.split(",");
-			_r1 = arr11[0];
-			_g1 = arr11[1];
-			_b1 = arr11[2];
+			var arr3 = value1.split(",");
+			_r1 = arr3[0];
+			_g1 = arr3[1];
+			_b1 = arr3[2];
 		} else if(value1.indexOf("#") != -1) {
 			var int1 = Std.parseInt(StringTools.replace(value1,"#","0x"));
 			var rgb_r1 = int1 >> 16 & 255;

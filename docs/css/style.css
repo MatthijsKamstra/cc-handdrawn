@@ -13,6 +13,8 @@ body {
   align-items: center;
   justify-content: center;
   max-width: 1080px;
+  margin-left: auto;
+  margin-right: auto;
 }
 canvas {
   background-color: white;
